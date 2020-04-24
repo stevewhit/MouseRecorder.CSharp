@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -34,17 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,58 +48,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MRContext.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MRContext.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="MRContext.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MRContext.tt</DependentUpon>
-    </Compile>
-    <Compile Include="MRContext.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MRContext.edmx</DependentUpon>
-    </Compile>
+    <Compile Include="Actions\Base\ActionBase.cs" />
+    <Compile Include="Actions\Base\PlaybackMouseActionBase.cs" />
+    <Compile Include="Actions\Base\RecordedMouseActionBase.cs" />
+    <Compile Include="Actions\Base\RecordedKeyboardActionBase.cs" />
+    <Compile Include="Actions\Base\PlaybackKeyboardActionBase.cs" />
+    <Compile Include="Actions\Base\KeyboardActionBase.cs" />
+    <Compile Include="Actions\Base\MouseActionBase.cs" />
+    <Compile Include="Actions\Base\PlaybackActionBase.cs" />
+    <Compile Include="Actions\Base\RecordedActionBase.cs" />
+    <Compile Include="Actions\PlaybackMouseMove.cs" />
+    <Compile Include="Actions\RecordedMouseMove.cs" />
+    <Compile Include="Actions\PlaybackKeyboardButtonPress.cs" />
+    <Compile Include="Actions\PlaybackMouseButtonRelease.cs" />
+    <Compile Include="Actions\PlaybackMouseButtonPress.cs" />
+    <Compile Include="Actions\RecordedMouseButtonRelease.cs" />
+    <Compile Include="Actions\RecordedMouseButtonPress.cs" />
+    <Compile Include="Actions\RecordedKeyboardButtonPress.cs" />
+    <Compile Include="Actions\PlaybackWait.cs" />
+    <Compile Include="Configuration\Base\RecordingBase.cs" />
+    <Compile Include="Configuration\LoadedRecording.cs" />
+    <Compile Include="Configuration\PlaybackConfiguration.cs" />
+    <Compile Include="Configuration\UnloadedRecording.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Zone\ClickZone.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Database Scripts\Build-Database.bat" />
-    <EntityDeploy Include="MRContext.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>MRContext.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="MRContext.edmx.diagram">
-      <DependentUpon>MRContext.edmx</DependentUpon>
-    </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="MRContext.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MRContext.edmx</DependentUpon>
-      <LastGenOutput>MRContext.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="MRContext.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MRContext.edmx</DependentUpon>
-      <LastGenOutput>MRContext.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.targets'))" />
-  </Target>
-  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" />
   <Import Project="..\tools\Build-Cleanup-Targets.targets" />
 </Project>
