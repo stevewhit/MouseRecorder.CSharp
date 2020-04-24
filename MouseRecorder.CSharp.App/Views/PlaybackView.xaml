@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="MouseRecorder.CSharp.App.Views.PlaybackView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MouseRecorder.CSharp.App.Views"
+             mc:Ignorable="d">
+    <DockPanel Margin="0,0,2,0">
+        <Menu DockPanel.Dock="Top" FontSize="15" Background="#FFF7F7F7">
+            <MenuItem Header="File">
+                <MenuItem Header="Save Configuration" />
+                <MenuItem Header="Load Configuration" />
+                <Separator/>
+                <MenuItem Header="Exit" />
+            </MenuItem>
+        </Menu>
+        <DockPanel>
+            <Grid DockPanel.Dock="Top" Height="90">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="70" />
+                </Grid.ColumnDefinitions>
+                <Button Name="BtnView" Grid.Column="0" ToolTip="New tooltip.." Margin="3,0,0,0" Command="{Binding NavigateCommand}" CommandParameter="2" Click="BtnView_Clicked">
+                    <StackPanel Orientation="Vertical">
+                        <Image Source="../Images/Arrows-Right.png" Margin="10,15,5,0"/>
+                        <TextBlock Padding="2" HorizontalAlignment="Center">View</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Name="BtnNew" Grid.Column="1" ToolTip="New tooltip.." Margin="3, 0, 0, 0">
+                    <StackPanel Orientation="Vertical">
+                        <Image Source="../Images/New.png" Margin="5,11,5,0"/>
+                        <TextBlock Padding="2" HorizontalAlignment="Center">New</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Name="BtnPlay" Grid.Column="2" ToolTip="New tooltip.." Margin="3, 0, 0, 0">
+                    <StackPanel Orientation="Vertical">
+                        <Image Source="../Images/Play.png" Margin="5, 10, 5, 0"/>
+                        <TextBlock Padding="2" HorizontalAlignment="Center">Play All</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Name="BtnStop" Grid.Column="3" ToolTip="New tooltip.." Margin="3, 0, 0, 0">
+                    <StackPanel Orientation="Vertical">
+                        <Image Source="../Images/Stop.png" Margin="5, 10, 5, 0"/>
+                        <TextBlock Padding="2" HorizontalAlignment="Center">Stop</TextBlock>
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <GroupBox Header="Playback Options" Margin="5" Padding="10" DockPanel.Dock="Top">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Column="0" Grid.Row="0" Margin="0, 3">Show starting position overlay</CheckBox>
+                    <CheckBox Grid.Column="0" Grid.Row="1" Margin="0, 3" VerticalAlignment="Center">Repeat script certain number of times:</CheckBox>
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0, 3" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center">0</TextBox>
+                    <CheckBox Grid.Column="0" Grid.Row="2" Margin="0, 3" VerticalAlignment="Center">Repeat script for length of time:</CheckBox>
+                    <TextBox Grid.Column="1" Grid.Row="2" Margin="0, 3" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center">0</TextBox>
+                    <ComboBox Grid.Column="1" Grid.Row="2" Margin="0, 3" Width="75" Padding="2,1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <ComboBoxItem>Seconds</ComboBoxItem>
+                        <ComboBoxItem IsSelected="True">Minutes</ComboBoxItem>
+                        <ComboBoxItem>Hours</ComboBoxItem>
+                    </ComboBox>
+                    <CheckBox Grid.Column="0" Grid.Row="3" Margin="0, 3">Ignore click-zones (pixel color checks) during playback</CheckBox>
+                    <CheckBox Grid.Column="0" Grid.Row="4" Margin="0, 3">Stop playback queue if this script fails</CheckBox>
+                    <CheckBox Grid.Column="0" Grid.Row="5" Margin="0, 3">Run another script if this script fails:</CheckBox>
+                    <TextBox Grid.ColumnSpan="2" Grid.Row="5" IsEnabled="False" HorizontalAlignment="Right" BorderThickness="0" Background="{x:Null}">Filename-after-selection.txt</TextBox>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Playback Queue" Margin="5" Padding="10" DockPanel.Dock="Top">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.5*" />
+                        <RowDefinition Height="10*" />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Width="75">Add</Button>
+                    <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" Width="75">Remove</Button>
+                    <ListView Grid.ColumnSpan="2" Grid.Row="1" Margin="0,6,0,0">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Id" Width="120" DisplayMemberBinding="{Binding Id}" />
+                                <GridViewColumn Header="File Path" DisplayMemberBinding="{Binding FileName}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </GroupBox>
+        </DockPanel>
+    </DockPanel>
+</UserControl>

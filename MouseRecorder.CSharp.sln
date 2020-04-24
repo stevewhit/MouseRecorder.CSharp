@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseRecorder.CSharp.App", "MouseRecorder.CSharp.App\MouseRecorder.CSharp.App.csproj", "{FB5B8E89-B9A8-4AF8-BCF8-187D8762C035}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Generic", "..\Framework.Generic\Framework.Generic\Framework.Generic.csproj", "{90236CE3-7B97-457A-8BC2-9ACAED973488}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Generic.Tests", "..\Framework.Generic\Framework.Generic.Tests\Framework.Generic.Tests.csproj", "{78DD3503-2D8E-492B-93D5-771C68ED5A63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseRecorder.CSharp.App", "MouseRecorder.CSharp.App\MouseRecorder.CSharp.App.csproj", "{4504543A-D272-4348-A0A7-2A0C37346006}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseRecorder.CSharp.DataModel", "MouseRecorder.CSharp.DataModel\MouseRecorder.CSharp.DataModel.csproj", "{50C508D9-697F-42D7-9E3A-0AE039DA42BF}"
 EndProject
@@ -19,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FB5B8E89-B9A8-4AF8-BCF8-187D8762C035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB5B8E89-B9A8-4AF8-BCF8-187D8762C035}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB5B8E89-B9A8-4AF8-BCF8-187D8762C035}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB5B8E89-B9A8-4AF8-BCF8-187D8762C035}.Release|Any CPU.Build.0 = Release|Any CPU
 		{90236CE3-7B97-457A-8BC2-9ACAED973488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{90236CE3-7B97-457A-8BC2-9ACAED973488}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90236CE3-7B97-457A-8BC2-9ACAED973488}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -31,6 +27,10 @@ Global
 		{78DD3503-2D8E-492B-93D5-771C68ED5A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78DD3503-2D8E-492B-93D5-771C68ED5A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78DD3503-2D8E-492B-93D5-771C68ED5A63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4504543A-D272-4348-A0A7-2A0C37346006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4504543A-D272-4348-A0A7-2A0C37346006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4504543A-D272-4348-A0A7-2A0C37346006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4504543A-D272-4348-A0A7-2A0C37346006}.Release|Any CPU.Build.0 = Release|Any CPU
 		{50C508D9-697F-42D7-9E3A-0AE039DA42BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{50C508D9-697F-42D7-9E3A-0AE039DA42BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50C508D9-697F-42D7-9E3A-0AE039DA42BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
