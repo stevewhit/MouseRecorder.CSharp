@@ -13,5 +13,7 @@ namespace MouseRecorder.CSharp.DataModel.Actions
         /// The date that this action was captured.
         /// </summary>
         public DateTime Date { get; set; }
+
+        protected RecordedKeyboardActionBase() { }
     }
 }

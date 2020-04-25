@@ -9,7 +9,7 @@ namespace MouseRecorder.CSharp.DataModel.Configuration
         /// <summary>
         /// The actions that take place during this recording.
         /// </summary>
-        IEnumerable<IPlaybackAction> Actions { get; set; }
+        IList<IPlaybackAction> Actions { get; set; }
     }
 
     public class LoadedRecording : RecordingBase, ILoadedRecording
@@ -17,6 +17,6 @@ namespace MouseRecorder.CSharp.DataModel.Configuration
         /// <summary>
         /// The loaded actions that will take place during this recording.
         /// </summary>
-        public IEnumerable<IPlaybackAction> Actions { get; set; }
+        public IList<IPlaybackAction> Actions { get; set; }
     }
 }

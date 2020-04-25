@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Drawing;
 
 namespace MouseRecorder.CSharp.DataModel.Actions
@@ -23,5 +22,7 @@ namespace MouseRecorder.CSharp.DataModel.Actions
         /// The color of the pixel on the screen.
         /// </summary>
         public Color PixelColor { get; set; }
+
+        protected RecordedMouseActionBase() { }
     }
 }

@@ -20,5 +20,7 @@ namespace MouseRecorder.CSharp.DataModel.Actions
         /// The Id of the action.
         /// </summary>
         public int Id { get; set; }
+
+        protected ActionBase() { }
     }
 }

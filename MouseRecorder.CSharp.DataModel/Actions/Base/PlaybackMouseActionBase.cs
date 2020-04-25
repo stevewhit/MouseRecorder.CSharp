@@ -18,5 +18,7 @@ namespace MouseRecorder.CSharp.DataModel.Actions
         /// The expected color of the pixel at the time that this action is played back.
         /// </summary>
         public Color ExpectedPixelColor { get; set; }
+
+        protected PlaybackMouseActionBase() { }
     }
 }

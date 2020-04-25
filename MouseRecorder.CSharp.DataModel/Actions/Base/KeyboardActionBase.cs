@@ -16,5 +16,7 @@ namespace MouseRecorder.CSharp.DataModel.Actions
         /// The Key for the keyboard action.
         /// </summary>
         public Keys Key { get; set; }
+
+        protected KeyboardActionBase() { }
     }
 }

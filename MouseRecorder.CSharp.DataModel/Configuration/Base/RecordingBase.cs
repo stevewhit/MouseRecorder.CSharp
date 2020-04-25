@@ -17,7 +17,7 @@ namespace MouseRecorder.CSharp.DataModel.Configuration.Base
         /// <summary>
         /// The click-zones of this recording.
         /// </summary>
-        IEnumerable<ClickZone> Zones { get; set; }
+        IList<ClickZone> Zones { get; set; }
     }
 
     public abstract class RecordingBase : IRecording
@@ -30,6 +30,8 @@ namespace MouseRecorder.CSharp.DataModel.Configuration.Base
         /// <summary>
         /// The click-zones of this recording.
         /// </summary>
-        public IEnumerable<ClickZone> Zones { get; set; }
+        public IList<ClickZone> Zones { get; set; }
+
+        protected RecordingBase() { }
     }
 }

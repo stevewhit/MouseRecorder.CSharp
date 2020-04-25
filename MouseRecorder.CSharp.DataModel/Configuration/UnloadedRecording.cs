@@ -1,6 +1,5 @@
 ﻿using MouseRecorder.CSharp.DataModel.Actions;
 using MouseRecorder.CSharp.DataModel.Configuration.Base;
-using System;
 using System.Collections.Generic;
 
 namespace MouseRecorder.CSharp.DataModel.Configuration
@@ -10,7 +9,7 @@ namespace MouseRecorder.CSharp.DataModel.Configuration
         /// <summary>
         /// The actions that take place during this recording.
         /// </summary>
-        IEnumerable<IRecordedAction> Actions { get; set; }
+        IList<IRecordedAction> Actions { get; set; }
     }
 
     public class UnloadedRecording : RecordingBase, IUnloadedRecording
@@ -18,6 +17,6 @@ namespace MouseRecorder.CSharp.DataModel.Configuration
         /// <summary>
         /// The actions that take place during this recording.
         /// </summary>
-        public IEnumerable<IRecordedAction> Actions { get; set; }
+        public IList<IRecordedAction> Actions { get; set; }
     }
 }

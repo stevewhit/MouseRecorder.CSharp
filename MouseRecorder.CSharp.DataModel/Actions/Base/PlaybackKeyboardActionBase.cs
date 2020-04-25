@@ -9,6 +9,6 @@ namespace MouseRecorder.CSharp.DataModel.Actions
 
     public abstract class PlaybackKeyboardActionBase : KeyboardActionBase, IPlaybackKeyboardAction
     {
-        
+        protected PlaybackKeyboardActionBase() { }
     }
 }
