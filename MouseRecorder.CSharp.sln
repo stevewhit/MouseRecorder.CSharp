@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseRecorder.CSharp.DataMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseRecorder.CSharp.DataModel.Test", "MouseRecorder.CSharp.DataModel.Test\MouseRecorder.CSharp.DataModel.Test.csproj", "{BA59E71B-C152-4A5B-B235-8EA6FDE06EAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseRecorder.CSharp.Business", "MouseRecorder.CSharp.Business\MouseRecorder.CSharp.Business.csproj", "{9FD0C0B6-55BC-4CD1-90BE-02495EC14F9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseRecorder.CSharp.Business.Test", "MouseRecorder.CSharp.Business.Test\MouseRecorder.CSharp.Business.Test.csproj", "{CEA59E4D-0F92-48AD-97EE-64F05644DE66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{BA59E71B-C152-4A5B-B235-8EA6FDE06EAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA59E71B-C152-4A5B-B235-8EA6FDE06EAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA59E71B-C152-4A5B-B235-8EA6FDE06EAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FD0C0B6-55BC-4CD1-90BE-02495EC14F9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FD0C0B6-55BC-4CD1-90BE-02495EC14F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FD0C0B6-55BC-4CD1-90BE-02495EC14F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FD0C0B6-55BC-4CD1-90BE-02495EC14F9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEA59E4D-0F92-48AD-97EE-64F05644DE66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEA59E4D-0F92-48AD-97EE-64F05644DE66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEA59E4D-0F92-48AD-97EE-64F05644DE66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEA59E4D-0F92-48AD-97EE-64F05644DE66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
