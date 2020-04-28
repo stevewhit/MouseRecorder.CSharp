@@ -51,6 +51,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\FakePlaybackConfigurations.cs" />
     <Compile Include="Builders\FakeRecordings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -58,6 +59,10 @@
     <ProjectReference Include="..\..\Framework.Generic\Framework.Generic\Framework.Generic.csproj">
       <Project>{90236CE3-7B97-457A-8BC2-9ACAED973488}</Project>
       <Name>Framework.Generic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MouseRecorder.CSharp.Business\MouseRecorder.CSharp.Business.csproj">
+      <Project>{9FD0C0B6-55BC-4CD1-90BE-02495EC14F9F}</Project>
+      <Name>MouseRecorder.CSharp.Business</Name>
     </ProjectReference>
     <ProjectReference Include="..\MouseRecorder.CSharp.DataModel\MouseRecorder.CSharp.DataModel.csproj">
       <Project>{50C508D9-697F-42D7-9E3A-0AE039DA42BF}</Project>

@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 namespace MouseRecorder.CSharp.DataModel.Configuration
 {
-    public interface ILoadedRecording : IRecording
+    public interface ILoadedPlaybackRecording : IPlaybackRecording
     {
         /// <summary>
-        /// The actions that take place during this recording.
+        /// The loaded actions that will take place during this recording.
         /// </summary>
         IList<IPlaybackAction> Actions { get; set; }
     }
 
-    public class LoadedRecording : RecordingBase, ILoadedRecording
+    public class LoadedPlaybackRecording : PlaybackRecordingBase, ILoadedPlaybackRecording
     {
         /// <summary>
         /// The loaded actions that will take place during this recording.

@@ -1,12 +1,14 @@
-﻿using MouseRecorder.CSharp.DataModel.Actions;
+﻿using Framework.Generic.IO;
+using MouseRecorder.CSharp.DataModel.Actions;
 using MouseRecorder.CSharp.DataModel.Zone;
 using System;
 using System.Collections.Generic;
 
 namespace MouseRecorder.CSharp.Business.ExportObjects
 {
-    public class SerializedRecording : ISerializedObject
+    public class SerializedRecording : ISerializedJsonObject
     {
+        public string FilePath { get; set; }
         public DateTime Date { get; set; }
         public List<ClickZone> Zones { get; set; }
         public List<RecordedKeyboardButtonPress> KeyboardButtonPresses { get; set; }

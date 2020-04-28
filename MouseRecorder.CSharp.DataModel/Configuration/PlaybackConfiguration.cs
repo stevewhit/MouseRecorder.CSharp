@@ -6,16 +6,26 @@ namespace MouseRecorder.CSharp.DataModel.Configuration
     public interface IPlaybackConfiguration
     {
         /// <summary>
-        /// The recordings that are contained in this configuration.
+        /// The file path location of this configuration.
         /// </summary>
-        IEnumerable<IRecording> Recordings { get; set; }
-    }
+        string FilePath { get; set; }
 
-    public class PlaybackConfiguration
-    {
         /// <summary>
         /// The recordings that are contained in this configuration.
         /// </summary>
-        public IEnumerable<IRecording> Recordings { get; set; }
+        IEnumerable<IPlaybackRecording> Recordings { get; set; }
+    }
+
+    public class PlaybackConfiguration : IPlaybackConfiguration
+    {
+        /// <summary>
+        /// The file path location of this configuration
+        /// </summary>
+        public string FilePath { get; set; }
+
+        /// <summary>
+        /// The recordings that are contained in this configuration.
+        /// </summary>
+        public IEnumerable<IPlaybackRecording> Recordings { get; set; }
     }
 }
