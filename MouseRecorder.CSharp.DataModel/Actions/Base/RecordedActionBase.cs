@@ -5,8 +5,8 @@ namespace MouseRecorder.CSharp.DataModel.Actions
     public interface IRecordedAction
     {
         /// <summary>
-        /// The date that this action was captured.
+        /// The time (in ticks) that this action was captured.
         /// </summary>
-        DateTime Date { get; set; }
+        long TimeRecorded { get; set; }
     }
 }

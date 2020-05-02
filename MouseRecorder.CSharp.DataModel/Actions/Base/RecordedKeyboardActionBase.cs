@@ -10,9 +10,9 @@ namespace MouseRecorder.CSharp.DataModel.Actions
     public abstract class RecordedKeyboardActionBase : KeyboardActionBase, IRecordedKeyboardAction
     {
         /// <summary>
-        /// The date that this action was captured.
+        /// The time (in ticks) that this action was captured.
         /// </summary>
-        public DateTime Date { get; set; }
+        public long TimeRecorded { get; set; }
 
         protected RecordedKeyboardActionBase() { }
     }

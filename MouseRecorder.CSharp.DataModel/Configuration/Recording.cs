@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MouseRecorder.CSharp.DataModel.Configuration
 {
-    public interface IUnloadedRecording : IRecording
+    public interface IRecording : IRecordingBase
     {
         /// <summary>
         /// The actions that take place during this recording.
@@ -12,7 +12,7 @@ namespace MouseRecorder.CSharp.DataModel.Configuration
         IList<IRecordedAction> Actions { get; set; }
     }
 
-    public class UnloadedRecording : RecordingBase, IUnloadedRecording
+    public class Recording : RecordingBase, IRecording
     {
         /// <summary>
         /// The actions that take place during this recording.

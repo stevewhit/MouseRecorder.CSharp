@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MouseRecorder.CSharp.DataModel.Configuration.Base
 {
-    public interface IRecording
+    public interface IRecordingBase
     {
         /// <summary>
         /// The date that this recording took place.
@@ -19,10 +19,10 @@ namespace MouseRecorder.CSharp.DataModel.Configuration.Base
         /// <summary>
         /// The click-zones of this recording.
         /// </summary>
-        IList<ClickZone> Zones { get; set; }
+        IList<IClickZone> Zones { get; set; }
     }
 
-    public abstract class RecordingBase : IRecording
+    public abstract class RecordingBase : IRecordingBase
     {
         /// <summary>
         /// The date that this recording took place.
@@ -37,7 +37,7 @@ namespace MouseRecorder.CSharp.DataModel.Configuration.Base
         /// <summary>
         /// The click-zones of this recording.
         /// </summary>
-        public IList<ClickZone> Zones { get; set; }
+        public IList<IClickZone> Zones { get; set; }
 
         protected RecordingBase() { }
     }

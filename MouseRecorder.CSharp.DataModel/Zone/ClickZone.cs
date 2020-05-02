@@ -10,7 +10,7 @@ namespace MouseRecorder.CSharp.DataModel.Zone
         Rectangle Shape { get; set; }
     }
 
-    public class ClickZone
+    public class ClickZone : IClickZone
     {
         /// <summary>
         /// Represents the location and dimensions of this click-zone.

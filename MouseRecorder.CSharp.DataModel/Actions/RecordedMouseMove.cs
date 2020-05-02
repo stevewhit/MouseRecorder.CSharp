@@ -10,16 +10,26 @@ namespace MouseRecorder.CSharp.DataModel.Actions
     public interface IRecordedMouseMove : IRecordedMouseAction
     {
         /// <summary>
-        /// The (X,Y) screen coordinate of this mouse move.
+        /// The X screen coordinate of this mouse move.
         /// </summary>
-        Point ScreenCoordinate { get; set; }
+        int XCoordinate { get; set; }
+
+        /// <summary>
+        /// The Y screen coordinate of this mouse move.
+        /// </summary>
+        int YCoordinate { get; set; }
     }
 
     public class RecordedMouseMove : RecordedMouseActionBase, IRecordedMouseMove
     {
         /// <summary>
-        /// The (X,Y) screen coordinate of this mouse move.
+        /// The X screen coordinate of this mouse move.
         /// </summary>
-        public Point ScreenCoordinate { get; set; }
+        public int XCoordinate { get; set; }
+
+        /// <summary>
+        /// The Y screen coordinate of this mouse move.
+        /// </summary>
+        public int YCoordinate { get; set; }
     }
 }

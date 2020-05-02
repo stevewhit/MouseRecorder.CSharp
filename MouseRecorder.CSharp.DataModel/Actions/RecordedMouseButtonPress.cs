@@ -7,12 +7,12 @@ using System.Drawing;
 
 namespace MouseRecorder.CSharp.DataModel.Actions
 {
-    public interface IRecordedMouseButtonPress : IRecordedMouseAction
+    public interface IRecordedMouseButtonPress : IRecordedMouseButtonAction
     {
 
     }
 
-    public class RecordedMouseButtonPress : RecordedMouseActionBase, IRecordedMouseButtonPress
+    public class RecordedMouseButtonPress : RecordedMouseButtonActionBase, IRecordedMouseButtonPress
     {
         
     }

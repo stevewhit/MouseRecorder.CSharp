@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MouseRecorder.CSharp.DataModel.Configuration.Base
 {
-    public interface IPlaybackRecording : IRecording
+    public interface IPlaybackRecording : IRecordingBase
     {
         /// <summary>
         /// The order in which this playback recording is run.
@@ -33,7 +33,7 @@ namespace MouseRecorder.CSharp.DataModel.Configuration.Base
         /// <summary>
         /// The recordings that should be run if playback of this recording fails.
         /// </summary>
-        List<IUnloadedRecording> RecordingsToRunIfFail { get; set; }
+        List<IRecording> RecordingsToRunIfFail { get; set; }
     }
 
     public abstract class PlaybackRecordingBase : RecordingBase, IPlaybackRecording
@@ -66,6 +66,6 @@ namespace MouseRecorder.CSharp.DataModel.Configuration.Base
         /// <summary>
         /// The recordings that should be run if playback of this recording fails.
         /// </summary>
-        public List<IUnloadedRecording> RecordingsToRunIfFail{ get; set; }
+        public List<IRecording> RecordingsToRunIfFail{ get; set; }
     }
 }

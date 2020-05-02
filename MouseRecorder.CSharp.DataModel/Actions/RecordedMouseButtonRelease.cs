@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MouseRecorder.CSharp.DataModel.Actions
 {
-    public interface IRecordedMouseButtonRelease : IRecordedMouseAction
+    public interface IRecordedMouseButtonRelease : IRecordedMouseButtonAction
     {
 
     }
 
-    public class RecordedMouseButtonRelease : RecordedMouseActionBase, IRecordedMouseButtonRelease
+    public class RecordedMouseButtonRelease : RecordedMouseButtonActionBase, IRecordedMouseButtonRelease
     {
         
     }

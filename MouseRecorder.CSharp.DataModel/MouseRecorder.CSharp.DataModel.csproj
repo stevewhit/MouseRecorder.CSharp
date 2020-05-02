@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -50,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Actions\Base\ActionBase.cs" />
     <Compile Include="Actions\Base\PlaybackMouseActionBase.cs" />
+    <Compile Include="Actions\Base\RecordedMouseButtonActionBase.cs" />
     <Compile Include="Actions\Base\RecordedMouseActionBase.cs" />
     <Compile Include="Actions\Base\RecordedKeyboardActionBase.cs" />
     <Compile Include="Actions\Base\PlaybackKeyboardActionBase.cs" />
@@ -68,12 +72,14 @@
     <Compile Include="Actions\RecordedMouseButtonPress.cs" />
     <Compile Include="Actions\RecordedKeyboardButtonPress.cs" />
     <Compile Include="Actions\PlaybackWait.cs" />
+    <Compile Include="Actions\RecordedMouseWheelScroll.cs" />
     <Compile Include="Configuration\Base\PlaybackRecordingBase.cs" />
     <Compile Include="Configuration\Base\RecordingBase.cs" />
     <Compile Include="Configuration\LoadedPlaybackRecording.cs" />
     <Compile Include="Configuration\PlaybackConfiguration.cs" />
+    <Compile Include="Configuration\RecordingConfiguration.cs" />
     <Compile Include="Configuration\UnloadedPlaybackRecording.cs" />
-    <Compile Include="Configuration\UnloadedRecording.cs" />
+    <Compile Include="Configuration\Recording.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Zone\ClickZone.cs" />
   </ItemGroup>
