@@ -12,9 +12,9 @@ namespace MouseRecorder.CSharp.DataModel.Test.Builders
 {
     public static class FakeRecordings
     {
-        public static UnloadedRecording CreateFakeUnloadedRecording()
+        public static Recording CreateFakeRecording()
         {
-            var recording = new UnloadedRecording
+            var recording = new Recording
             {
                 Actions = new List<IRecordedAction>(),
                 FilePath = @"FakePath:\FakeDirectory\FakeRecording.txt",
@@ -47,9 +47,9 @@ namespace MouseRecorder.CSharp.DataModel.Test.Builders
                 },
                  IgnoreClickZones = false,
                  Order = 1,
-                 RecordingsToRunIfFail = new List<IUnloadedRecording> 
+                 RecordingsToRunIfFail = new List<IRecording> 
                  { 
-                     CreateFakeUnloadedRecording()
+                     CreateFakeRecording()
                  },
                  StopIfFail = false,
                  TimesToRepeat = 5, 
@@ -69,24 +69,24 @@ namespace MouseRecorder.CSharp.DataModel.Test.Builders
 
         public static SerializedRecording CreateFakeSerializedRecording()
         {
-            var unloadedRecording = CreateFakeUnloadedRecording();
+            var recording = CreateFakeRecording();
 
             return new SerializedRecording()
             {
-                FilePath = unloadedRecording.FilePath,
-                Date = unloadedRecording.Date,
-                Zones = unloadedRecording.Zones.ToList(),
-                KeyboardButtonPresses = unloadedRecording.Actions.OfType<RecordedKeyboardButtonPress>().ToList(),
-                KeyboardButtonReleases = unloadedRecording.Actions.OfType<RecordedKeyboardButtonRelease>().ToList(),
-                MouseButtonPresses = unloadedRecording.Actions.OfType<RecordedMouseButtonPress>().ToList(),
-                MouseButtonReleases = unloadedRecording.Actions.OfType<RecordedMouseButtonRelease>().ToList(),
-                MouseMoves = unloadedRecording.Actions.OfType<RecordedMouseMove>().ToList()
+                FilePath = recording.FilePath,
+                Date = recording.Date,
+                Zones = recording.Zones.ToList(),
+                KeyboardButtonPresses = recording.Actions.OfType<RecordedKeyboardButtonPress>().ToList(),
+                KeyboardButtonReleases = recording.Actions.OfType<RecordedKeyboardButtonRelease>().ToList(),
+                MouseButtonPresses = recording.Actions.OfType<RecordedMouseButtonPress>().ToList(),
+                MouseButtonReleases = recording.Actions.OfType<RecordedMouseButtonRelease>().ToList(),
+                MouseMoves = recording.Actions.OfType<RecordedMouseMove>().ToList()
             };
         }
 
         public static SerializedPlaybackRecording CreateFakeSerializedPlaybackRecording()
         {
-            var unloadedRecording = CreateFakeUnloadedRecording();
+            var recording = CreateFakeRecording();
 
             return new SerializedPlaybackRecording()
             {

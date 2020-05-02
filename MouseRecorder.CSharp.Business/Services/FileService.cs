@@ -7,6 +7,7 @@ using System.IO.Abstractions;
 using Framework.Generic.IO;
 using MouseRecorder.CSharp.Business.ExportObjects;
 using System;
+using MouseRecorder.CSharp.DataModel.Zone;
 
 namespace MouseRecorder.CSharp.Business.Services
 {
@@ -24,7 +25,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         /// <param name="filePath">The file path location of where the recording is stored.</param>
         /// <returns>Returns the recording from the designated <paramref name="filePath"/>.</returns>
-        IUnloadedRecording GetRecording(string filePath);
+        IRecording GetRecording(string filePath);
 
         /// <summary>
         /// Saves the <paramref name="playbackConfig"/> to the file.
@@ -36,7 +37,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// Saves the <paramref name="recording"/> to the file.
         /// </summary>
         /// <param name="recording">The recording that should be saved.</param>
-        void SaveRecording(IUnloadedRecording recording);
+        void SaveRecording(IRecording recording);
     }
 
     public class FileService : IFileService
@@ -78,7 +79,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         /// <param name="filePath">The file path location of where the recording is stored.</param>
         /// <returns>Returns the recording from the designated <paramref name="filePath"/>.</returns>
-        public IUnloadedRecording GetRecording(string filePath)
+        public IRecording GetRecording(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 throw new ArgumentNullException(nameof(filePath));
@@ -112,7 +113,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// Saves the <paramref name="recording"/> to the file.
         /// </summary>
         /// <param name="recording">The recording that should be saved.</param>
-        public void SaveRecording(IUnloadedRecording recording)
+        public void SaveRecording(IRecording recording)
         {
             if (recording == null)
                 throw new ArgumentNullException(nameof(recording));
@@ -131,7 +132,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         /// <param name="recording">The un-serialized version of the recording.</param>
         /// <returns>Returns the serialized version of the <paramref name="recording"/>.</returns>
-        private SerializedRecording Serialize(IUnloadedRecording recording)
+        private SerializedRecording Serialize(IRecording recording)
         {
             if (recording.Actions == null)
                 throw new InvalidDataException("Unable to serialize the object because it is invalid.");
@@ -140,7 +141,7 @@ namespace MouseRecorder.CSharp.Business.Services
             {
                 FilePath = recording.FilePath ?? throw new InvalidDataException("Unable to serialize the object because it is invalid."),
                 Date = recording.Date,
-                Zones = recording.Zones?.ToList() ?? throw new InvalidDataException("Unable to serialize the object because it is invalid."),
+                Zones = recording.Zones.OfType<ClickZone>()?.ToList() ?? throw new InvalidDataException("Unable to serialize the object because it is invalid."),
                 KeyboardButtonPresses = recording.Actions.OfType<RecordedKeyboardButtonPress>().ToList(),
                 KeyboardButtonReleases = recording.Actions.OfType<RecordedKeyboardButtonRelease>().ToList(),
                 MouseButtonPresses = recording.Actions.OfType<RecordedMouseButtonPress>().ToList(),
@@ -180,22 +181,24 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         /// <param name="recording">The serialized version of the recording.</param>
         /// <returns>Returns the un-serialized version of the <paramref name="recording"/>.</returns>
-        private IUnloadedRecording Deserialize(SerializedRecording recording)
+        private IRecording Deserialize(SerializedRecording recording)
         {
             var actions = new List<IRecordedAction>();
-
             actions.AddRange(recording.KeyboardButtonPresses ?? throw new FileLoadException("There was an issue deserializing the object."));
             actions.AddRange(recording.KeyboardButtonReleases ?? throw new FileLoadException("There was an issue deserializing the object."));
             actions.AddRange(recording.MouseButtonPresses ?? throw new FileLoadException("There was an issue deserializing the object."));
             actions.AddRange(recording.MouseButtonReleases ?? throw new FileLoadException("There was an issue deserializing the object."));
             actions.AddRange(recording.MouseMoves ?? throw new FileLoadException("There was an issue deserializing the object."));
 
-            return new UnloadedRecording()
+            var zones = new List<IClickZone>();
+            zones.AddRange(recording.Zones ?? throw new FileLoadException("There was an issue deserializing the object."));
+
+            return new Recording()
             {
                 FilePath = recording.FilePath ?? throw new FileLoadException("There was an issue deserializing the object."),
                 Date = recording.Date,
-                Zones = recording.Zones ?? throw new FileLoadException("There was an issue deserializing the object."),
-                Actions = actions.OrderBy(a => a.Date).ToList()
+                Zones = zones,
+                Actions = actions.OrderBy(a => a.TimeRecorded).ToList()
             };
         }
 
@@ -211,12 +214,12 @@ namespace MouseRecorder.CSharp.Business.Services
                 FilePath = playbackConfig.FilePath ?? throw new FileLoadException("There was an issue deserializing the object."),
                 Recordings = playbackConfig.Recordings?.Select((spr) =>
                 {
-                    var unloadedRecording = GetRecording(spr.FilePath);
+                    var recording = GetRecording(spr.FilePath);
 
                     return new UnloadedPlaybackRecording()
                     {
                         // Serialized properties
-                        FilePath = unloadedRecording.FilePath,
+                        FilePath = recording.FilePath,
                         Order = spr.Order,
                         TimesToRepeat = spr.TimesToRepeat,
                         TimeToRun = spr.TimeToRun,
@@ -225,9 +228,9 @@ namespace MouseRecorder.CSharp.Business.Services
                         RecordingsToRunIfFail = spr.RecordingsToRunIfFail?.Select(filePath => GetRecording(filePath)).ToList() ?? throw new FileLoadException("There was an issue deserializing the object."),
 
                         // Additional properties
-                        Date = unloadedRecording.Date,
-                        Actions = unloadedRecording.Actions,
-                        Zones = unloadedRecording.Zones,
+                        Date = recording.Date,
+                        Actions = recording.Actions,
+                        Zones = recording.Zones,
                     };
                 }).ToList() ?? throw new FileLoadException("There was an issue deserializing the object.")
             };

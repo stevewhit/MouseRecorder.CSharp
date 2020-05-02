@@ -82,7 +82,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         public void GetPlaybackConfiguration_WithInvalidFileContents_ThrowsException()
         {
             // Arrange
-            var fakeRecording = FakeRecordings.CreateFakeUnloadedRecording();
+            var fakeRecording = FakeRecordings.CreateFakeRecording();
             var fakeRecordingJson = JsonConvert.SerializeObject(fakeRecording);
 
             _mockFileSystem.StoredFiles.Add(fakeRecording.FilePath, fakeRecordingJson);
@@ -113,7 +113,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         public void GetPlaybackConfiguration_WithMissingRecordingsToRunIfFail_ThrowsException()
         {
             // Arrange
-            var fakeRecording = FakeRecordings.CreateFakeUnloadedRecording();
+            var fakeRecording = FakeRecordings.CreateFakeRecording();
             _service.SaveRecording(fakeRecording);
 
             var fakeConfiguration = FakePlaybackConfigurations.CreateFakePlaybackConfiguration();
@@ -146,7 +146,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         public void GetPlaybackConfiguration_WithValidConfig_ReturnsPlaybackConfiguration()
         {
             // Arrange
-            var fakeRecording = FakeRecordings.CreateFakeUnloadedRecording();
+            var fakeRecording = FakeRecordings.CreateFakeRecording();
             _service.SaveRecording(fakeRecording);
 
             var fakeConfiguration = FakePlaybackConfigurations.CreateFakePlaybackConfiguration();
@@ -309,7 +309,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         }
 
         [TestMethod]
-        public void GetRecording_WithValidRecording_ReturnsUnloadedRecording()
+        public void GetRecording_WithValidRecording_ReturnsRecording()
         {
             // Arrange
             var fakeRecording = FakeRecordings.CreateFakeSerializedRecording();
@@ -423,7 +423,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         }
 
         #endregion
-        #region Testing SaveRecording(IUnloadedRecording recording)...
+        #region Testing SaveRecording(IRecording recording)...
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -438,7 +438,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         public void SaveRecording_WithNullActions_ThrowsException()
         {
             // Arrange 
-            var recording = FakeRecordings.CreateFakeUnloadedRecording();
+            var recording = FakeRecordings.CreateFakeRecording();
             recording.Actions = null;
 
             // Act
@@ -450,7 +450,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         public void SaveRecording_WithNullFilePath_ThrowsException()
         {
             // Arrange 
-            var recording = FakeRecordings.CreateFakeUnloadedRecording();
+            var recording = FakeRecordings.CreateFakeRecording();
             recording.FilePath = null;
 
             // Act
@@ -462,7 +462,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         public void SaveRecording_WithNullZones_ThrowsException()
         {
             // Arrange 
-            var recording = FakeRecordings.CreateFakeUnloadedRecording();
+            var recording = FakeRecordings.CreateFakeRecording();
             recording.Zones = null;
 
             // Act
@@ -493,7 +493,7 @@ namespace MouseRecorder.CSharp.Business.Test.Services
         public void SaveRecording_WithoutExistingFile_SavesFile()
         {
             // Arrange
-            var recording = FakeRecordings.CreateFakeUnloadedRecording();
+            var recording = FakeRecordings.CreateFakeRecording();
 
             // Act
             _service.SaveRecording(recording);
