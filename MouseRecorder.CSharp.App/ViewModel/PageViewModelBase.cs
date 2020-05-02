@@ -1,9 +1,11 @@
 ﻿using Framework.Generic.WPF;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace MouseRecorder.CSharp.App.ViewModel
 {
-    public abstract class PageViewModelBase : ViewModelBase, IPage
+    public abstract class PageViewModelBase : ViewModelBase, IPage, INotifyPropertyChanged
     {
         public RelayCommand<int> NavigateCommand
         {
@@ -16,9 +18,6 @@ namespace MouseRecorder.CSharp.App.ViewModel
             }
         }
 
-        public PageViewModelBase()
-        {
-
-        }
+        
     }
 }

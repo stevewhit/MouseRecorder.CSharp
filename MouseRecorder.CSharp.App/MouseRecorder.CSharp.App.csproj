@@ -35,8 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -155,6 +159,10 @@
     <ProjectReference Include="..\MouseRecorder.CSharp.Business\MouseRecorder.CSharp.Business.csproj">
       <Project>{9fd0c0b6-55bc-4cd1-90be-02495ec14f9f}</Project>
       <Name>MouseRecorder.CSharp.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MouseRecorder.CSharp.DataModel\MouseRecorder.CSharp.DataModel.csproj">
+      <Project>{50C508D9-697F-42D7-9E3A-0AE039DA42BF}</Project>
+      <Name>MouseRecorder.CSharp.DataModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

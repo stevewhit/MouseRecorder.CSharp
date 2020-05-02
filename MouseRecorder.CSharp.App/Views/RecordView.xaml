@@ -37,13 +37,13 @@
                         <TextBlock Padding="2" HorizontalAlignment="Center">New</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="BtnRecord" Grid.Column="2" ToolTip="New tooltip.." Margin="3, 0, 0, 0">
+                <Button Name="BtnRecord" Grid.Column="2" ToolTip="New tooltip.." Margin="3, 0, 0, 0" Click="BtnRecord_Clicked">
                     <StackPanel Orientation="Vertical">
                         <Image Source="../Images/Record.png" Margin="5, 10, 5, 0"/>
                         <TextBlock Padding="2" HorizontalAlignment="Center">Record</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="BtnStop" Grid.Column="3" ToolTip="New tooltip.." Margin="3, 0, 0, 0">
+                <Button Name="BtnStop" Grid.Column="3" ToolTip="New tooltip.." Margin="3, 0, 0, 0" Click="BtnStop_Clicked" >
                     <StackPanel Orientation="Vertical">
                         <Image Source="../Images/Stop.png" Margin="5, 10, 5, 0"/>
                         <TextBlock Padding="2" HorizontalAlignment="Center">Stop</TextBlock>
@@ -70,10 +70,10 @@
                 </Grid>
             </GroupBox>
             <GroupBox Header="Recording Outputs" Margin="5" Padding="10" DockPanel.Dock="Top">
-                <ListView Margin="0, 6, 0, 0">
+                <ListView Margin="0, 6, 0, 0" ItemsSource="{Binding Actions}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Action" DisplayMemberBinding="{Binding Action}"/>
+                            <GridViewColumn Header="Action"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
