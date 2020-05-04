@@ -73,6 +73,8 @@
     <Compile Include="Actions\RecordedKeyboardButtonPress.cs" />
     <Compile Include="Actions\PlaybackWait.cs" />
     <Compile Include="Actions\RecordedMouseWheelScroll.cs" />
+    <Compile Include="Actions\RecordedStart.cs" />
+    <Compile Include="Actions\RecordedStop.cs" />
     <Compile Include="Configuration\Base\PlaybackRecordingBase.cs" />
     <Compile Include="Configuration\Base\RecordingBase.cs" />
     <Compile Include="Configuration\LoadedPlaybackRecording.cs" />

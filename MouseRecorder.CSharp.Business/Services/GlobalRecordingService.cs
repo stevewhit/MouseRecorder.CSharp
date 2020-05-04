@@ -221,6 +221,12 @@ namespace MouseRecorder.CSharp.Business.Services
             SetSubscriptionToRecordingMouseEvents(true);
             SubscribeToStartStopCombinations();
 
+            // Add object to list of recorded actions.
+            _currentRecording.Actions.Add(new RecordedStart() 
+            { 
+                TimeRecorded = SystemTime.Now().Ticks 
+            });
+
             // Invoke the added action
             AdditionalActionOnStartRecording?.Invoke();
         }
@@ -231,6 +237,12 @@ namespace MouseRecorder.CSharp.Business.Services
         public void StopRecording()
         {
             _isRecording = false;
+
+            // Add object to list of recorded actions.
+            _currentRecording.Actions.Add(new RecordedStop()
+            {
+                TimeRecorded = SystemTime.Now().Ticks
+            });
 
             // Unsubscribe from any previous key & mouse event handlers.
             // This is especially useful if this method is called numerous times by accident.
