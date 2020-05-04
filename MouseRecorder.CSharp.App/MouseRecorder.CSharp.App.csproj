@@ -77,9 +77,6 @@
     <Compile Include="Views\PlaybackView.xaml.cs">
       <DependentUpon>PlaybackView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PromptDialog.xaml.cs">
-      <DependentUpon>PromptDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PromptYesNoCancel.xaml.cs">
       <DependentUpon>PromptYesNoCancel.xaml</DependentUpon>
     </Compile>
@@ -99,10 +96,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\PlaybackView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PromptDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
