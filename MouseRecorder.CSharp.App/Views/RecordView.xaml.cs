@@ -5,6 +5,9 @@ using MouseRecorder.CSharp.DataModel.Configuration;
 using System.Windows;
 using SWControls=System.Windows.Controls;
 using System.Windows.Forms;
+using System.Linq;
+using System;
+using Framework.Generic.Utility;
 
 namespace MouseRecorder.CSharp.App.Views
 {
@@ -15,28 +18,29 @@ namespace MouseRecorder.CSharp.App.Views
     {
         private readonly RecordViewModel _model;
         private readonly IGlobalRecordingService _service;
-        private readonly IRecordingConfiguration _config;
 
         public RecordView()
         {
             InitializeComponent();
-            _model = new RecordViewModel();
-            DataContext = _model;
 
-            _config = new RecordingConfiguration
+            var config = new RecordingConfiguration
             {
                 RecordKeyboardInputs = true,
                 RecordMouseInputs = true,
                 StartRecordingCombination = Combination.TriggeredBy(Keys.A).With(Keys.S),
                 StopRecordingCombination = Combination.TriggeredBy(Keys.A).With(Keys.S)
             };
-            
+
+            // Set the datacontext
+            _model = new RecordViewModel();
+            DataContext = _model;
+
+            // Subscribe to the recording service
             _service = new GlobalRecordingService();
-            _service.Subscribe(_config);
-            SubscribeToKeyMouseEvents();
+            _service.Subscribe(config); 
         }
 
-        #region Key Mouse Events
+        #region Recorded Key Mouse Event Handlers
 
         /// <summary>
         /// Subscribes additional actions for the recorded key mouse events.
@@ -53,12 +57,25 @@ namespace MouseRecorder.CSharp.App.Views
             _service.AdditionalActionOnStopRecording = OnStopRecording;
         }
 
+        private void UnsubscribeToKeyMouseEvents()
+        {
+            _service.AdditionalActionOnKeyDown = null;
+            _service.AdditionalActionOnKeyUp = null;
+            _service.AdditionalActionOnMouseMove = null;
+            _service.AdditionalActionOnMouseDown = null;
+            _service.AdditionalActionOnMouseUp = null;
+            _service.AdditionalActionOnMouseWheel = null;
+            _service.AdditionalActionOnStartRecording = null;
+            _service.AdditionalActionOnStopRecording = null;
+        }
+
         /// <summary>
         /// 
         /// </summary>
         private void OnKeyDown(KeyEventArgs e)
         {
-            _model.Actions.Add($"Key Down: {e.KeyCode}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Down: {e.KeyCode}");
+            ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
         /// <summary>
@@ -66,7 +83,8 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnKeyUp(KeyEventArgs e)
         {
-            _model.Actions.Add($"Key Up: {e.KeyCode}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Up: {e.KeyCode}");
+            ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
         /// <summary>
@@ -74,7 +92,8 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseMove(MouseEventArgs e)
         {
-            _model.Actions.Add($"Mouse Move: {e.Location}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Move: {e.Location}");
+            ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
         /// <summary>
@@ -82,7 +101,8 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseDown(MouseEventArgs e)
         {
-            _model.Actions.Add($"Mouse Down: {e.Button}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Down: {e.Button}");
+            ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
         /// <summary>
@@ -90,7 +110,8 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
-            _model.Actions.Add($"Mouse Up: {e.Button}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Up: {e.Button}");
+            ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
         /// <summary>
@@ -98,7 +119,8 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseWheel(MouseEventArgs e)
         {
-            _model.Actions.Add($"Mouse Wheel: {e.Delta}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Wheel: {e.Delta}");
+            ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
         /// <summary>
@@ -106,7 +128,11 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnStartRecording()
         {
-            _model.Actions.Add($"Recording started..");
+            if (!_model.IsRecording)
+            {
+                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording started..");
+                ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
+            }
         }
 
         /// <summary>
@@ -114,26 +140,60 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnStopRecording()
         {
-            _model.Actions.Add($"Recording stopped..");
+            if (_model.IsRecording)
+            {
+                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording stopped..");
+                ListViewActions.ScrollIntoView(_model.Actions[_model.Actions.Count - 1]);
+            }
         }
 
         #endregion
+        #region Control Event Handlers
 
         private void BtnView_Clicked(object sender, RoutedEventArgs e)
         {
-            // prompt to save..?
+            // TODO: prompt to save..?
             _service.Unsubscribe();
         }
 
         private void BtnRecord_Clicked(object sender, RoutedEventArgs e)
         {
-            _service.StartRecording();
+            StartRecording();
         }
 
         private void BtnStop_Clicked(object sender, RoutedEventArgs e)
         {
+            StopRecording();
+        }
+
+        private void CheckBoxShowRecordedActions_Changed(object sender, RoutedEventArgs e)
+        {
+            if (_model.ShowRecordedActions)
+                SubscribeToKeyMouseEvents();
+            else
+                UnsubscribeToKeyMouseEvents();
+        }
+
+        private void CheckBoxShowStartingPositionOverlay_Changed(object sender, RoutedEventArgs e)
+        {
+            if (_model.ShowStartingPositionOverlay)
+                throw new NotImplementedException();
+            else
+                throw new NotImplementedException();
+        }
+
+        #endregion
+
+        private void StartRecording()
+        {
+            _model.IsRecording = true;
+            _service.StartRecording();
+        }
+
+        private void StopRecording()
+        {
+            _model.IsRecording = false;
             _service.StopRecording();
-            _service.Save("testestes.txt");
         }
     }
 }
