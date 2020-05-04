@@ -173,7 +173,7 @@ namespace MouseRecorder.CSharp.App.Views
         private void BtnNew_Click(object sender, RoutedEventArgs e)
         {
             // Prompt user to see if they want to save the current recording.
-            var selectedAnswer = PromptYesNoCancel.Prompt(PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
+            var selectedAnswer = PromptYesNoCancel.Prompt(PromptYesNoCancel.PromptType.YesNoCancel, PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
             if (selectedAnswer == PromptYesNoCancel.DialogAnswer.Yes)
             {
                 PromptUserWithSaveFileDialog();
@@ -233,8 +233,8 @@ namespace MouseRecorder.CSharp.App.Views
             if (_model.CanSaveRecording)
             {
                 // Prompt user to see if they want to save the current recording.
-                var selectedAnswer = PromptYesNo.Prompt(PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
-                if (selectedAnswer == PromptYesNo.DialogAnswer.Yes)
+                var selectedAnswer = PromptYesNoCancel.Prompt(PromptYesNoCancel.PromptType.YesNo, PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
+                if (selectedAnswer == PromptYesNoCancel.DialogAnswer.Yes)
                 {
                     PromptUserWithSaveFileDialog();
                 }

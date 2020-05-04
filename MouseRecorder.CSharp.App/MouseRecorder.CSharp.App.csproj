@@ -80,9 +80,6 @@
     <Compile Include="Views\PromptDialog.xaml.cs">
       <DependentUpon>PromptDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PromptYesNo.xaml.cs">
-      <DependentUpon>PromptYesNo.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PromptYesNoCancel.xaml.cs">
       <DependentUpon>PromptYesNoCancel.xaml</DependentUpon>
     </Compile>
@@ -108,10 +105,6 @@
     <Page Include="Views\PromptDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PromptYesNo.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PromptYesNoCancel.xaml">
       <SubType>Designer</SubType>

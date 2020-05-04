@@ -7,6 +7,12 @@ namespace MouseRecorder.CSharp.App.Views
     /// </summary>
     public partial class PromptYesNoCancel : Window
     {
+        public enum PromptType
+        {
+            YesNo,
+            YesNoCancel
+        }
+
         public enum DialogAnswer
         {
             Yes,
@@ -16,7 +22,7 @@ namespace MouseRecorder.CSharp.App.Views
 
         public DialogAnswer SelectedChoice { get; set; }
 
-        public PromptYesNoCancel(string question, string title, Window owner = null)
+        public PromptYesNoCancel(PromptType type, string question, string title, Window owner = null)
         {
             InitializeComponent();
 
@@ -29,11 +35,14 @@ namespace MouseRecorder.CSharp.App.Views
 
             txtQuestion.Text = question;
             Title = title;
+
+            if (type == PromptType.YesNo)
+                BtnCancel.Visibility = Visibility.Collapsed;
         }
 
-        public static DialogAnswer Prompt(string question, string title)
+        public static DialogAnswer Prompt(PromptType type, string question, string title)
         {
-            var prompt = new PromptYesNoCancel(question, title);
+            var prompt = new PromptYesNoCancel(type, question, title);
             prompt.ShowDialog();
 
             if (prompt.DialogResult == true)
