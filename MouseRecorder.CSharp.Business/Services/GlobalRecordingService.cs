@@ -62,11 +62,12 @@ namespace MouseRecorder.CSharp.Business.Services
         Action AdditionalActionOnStopRecording { get; set; }
 
         /// <summary>
-        /// Subscribes the recording <paramref name="configuration"/> to the service and starts the 
-        /// global start recording combination listener.
+        /// Registers the <paramref name="startRecordingCombination"/> and <paramref name="stopRecordingCombination"/> combinations
+        /// for starting and stopping the recording.
         /// </summary>
-        /// <param name="configuration">The configuration to use when recording.</param>
-        void Subscribe(IRecordingConfiguration configuration);
+        /// <param name="startRecordingCombination">The key combination that starts the recording.</param>
+        /// <param name="stopRecordingCombination">The key combination that stops the recording.</param>
+        void RegisterCombinations(Combination startRecordingCombination, Combination stopRecordingCombination);
 
         /// <summary>
         /// Unsubscribes the recording from the service and stops all global listeners if any are running.
@@ -94,9 +95,11 @@ namespace MouseRecorder.CSharp.Business.Services
     {
         private readonly IFileService _fileService;
         private readonly IRecording _currentRecording;
-        private IRecordingConfiguration _subscribedConfiguration;
+        private Combination _startRecordingCombination;
+        private Combination _stopRecordingCombination;
         private ISet<Keys> _pressedKeys;
         private static IKeyboardMouseEvents _globalKeyMouseEvents;
+        private bool _isRecording;
 
         #region Additional Recording Event Action Properties
 
@@ -162,26 +165,27 @@ namespace MouseRecorder.CSharp.Business.Services
             _pressedKeys = new HashSet<Keys>();
         }
 
+        #region IGlobalRecordingService Methods
+
         /// <summary>
-        /// Subscribes the recording <paramref name="configuration"/> to the service and starts the 
-        /// global start recording combination listener.
+        /// Registers the <paramref name="startRecordingCombination"/> and <paramref name="stopRecordingCombination"/> combinations
+        /// for starting and stopping the recording.
         /// </summary>
-        /// <param name="configuration">The configuration to use when recording.</param>
-        public void Subscribe(IRecordingConfiguration configuration)
+        /// <param name="startRecordingCombination">The key combination that starts the recording.</param>
+        /// <param name="stopRecordingCombination">The key combination that stops the recording.</param>
+        public void RegisterCombinations(Combination startRecordingCombination, Combination stopRecordingCombination)
         {
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
+            _startRecordingCombination = startRecordingCombination;
+            _stopRecordingCombination = stopRecordingCombination;
 
-            // Unsubscribe any previous event handlers.
-            Unsubscribe();
+            _globalKeyMouseEvents = _globalKeyMouseEvents ?? Hook.GlobalEvents();
 
-            _subscribedConfiguration = configuration;
-            _globalKeyMouseEvents = Hook.GlobalEvents();
-
-            // Subscribe to the start recording key combination
+            // Subscribe to shared key event handlers
             SetSubscriptionToSharedKeyboardEvents(true);
-            SetSubscriptionToStartRecordingCombinationEvents(true);
-            SetSubscriptionToStopRecordingCombinationEvents(false);
+
+            // Subscribe to the appropriate key combination depending on if it is current recording.
+            SetSubscriptionToStartRecordingCombinationEvents(!_isRecording);
+            SetSubscriptionToStopRecordingCombinationEvents(_isRecording);
         }
 
         /// <summary>
@@ -189,7 +193,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         public void Unsubscribe()
         {
-            _subscribedConfiguration = null;
+            UnsubscribeAllRecordingEventHandlers();
 
             // Dispose the global listeners.
             _globalKeyMouseEvents?.Dispose();
@@ -205,18 +209,17 @@ namespace MouseRecorder.CSharp.Business.Services
             if (!appendToExisting)
                 _currentRecording.Actions = new List<IRecordedAction>();
 
-            if (_subscribedConfiguration == null)
-                throw new InvalidOperationException("The service has not been subscribed to yet.");
+            _globalKeyMouseEvents = _globalKeyMouseEvents ?? Hook.GlobalEvents();
+            _isRecording = true;
 
-            // Unsubscribe from any previous key & mouse event handlers.
+            // Unsubscribe from any previous key and mouse event handlers.
             // This is especially useful if this method is called numerous times by accident.
             UnsubscribeAllRecordingEventHandlers();
 
             // Subscribe to key & mouse events
             SetSubscriptionToRecordingKeyboardEvents(true);
             SetSubscriptionToRecordingMouseEvents(true);
-            SetSubscriptionToStartRecordingCombinationEvents(false);
-            SetSubscriptionToStopRecordingCombinationEvents(true);
+            SubscribeToStartStopCombinations();
 
             // Invoke the added action
             AdditionalActionOnStartRecording?.Invoke();
@@ -227,8 +230,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         public void StopRecording()
         {
-            if (_subscribedConfiguration == null)
-                throw new InvalidOperationException("The service has not been subscribed to yet.");
+            _isRecording = false;
 
             // Unsubscribe from any previous key & mouse event handlers.
             // This is especially useful if this method is called numerous times by accident.
@@ -237,10 +239,9 @@ namespace MouseRecorder.CSharp.Business.Services
             // Unsubscribe to key & mouse events
             SetSubscriptionToRecordingKeyboardEvents(false);
             SetSubscriptionToRecordingMouseEvents(false);
-            SetSubscriptionToStartRecordingCombinationEvents(true);
-            SetSubscriptionToStopRecordingCombinationEvents(false);
+            SubscribeToStartStopCombinations();
 
-            // Forget any pressed keys -- Needs to be moved somewhere else because we can't add time information if we want to add a key-release action. ========================================================================================================================
+            // Forget any pressed keys
             _pressedKeys = new HashSet<Keys>();
 
             // Invoke the added action
@@ -264,15 +265,27 @@ namespace MouseRecorder.CSharp.Business.Services
             _fileService.SaveRecording(_currentRecording);
         }
 
+        #endregion
+        #region Subscription Helpers
         /// <summary>
-        /// Unsubscribes the recording from all key & mouse event handlers.
+        /// Unsubscribes the recording from all key and mouse event handlers.
         /// </summary>
         private void UnsubscribeAllRecordingEventHandlers()
-        {
+        { 
             SetSubscriptionToRecordingKeyboardEvents(false);
             SetSubscriptionToRecordingMouseEvents(false);
             SetSubscriptionToStartRecordingCombinationEvents(false);
             SetSubscriptionToStopRecordingCombinationEvents(false);
+        }
+
+        /// <summary>
+        /// Subscribes to the appropriate start/stop key combinations depending on if it is
+        /// currently recording.
+        /// </summary>
+        private void SubscribeToStartStopCombinations()
+        {
+            SetSubscriptionToStartRecordingCombinationEvents(!_isRecording);
+            SetSubscriptionToStopRecordingCombinationEvents(_isRecording);
         }
 
         /// <summary>
@@ -281,16 +294,14 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <param name="subscribe">Sets the subscription status of the global key event handlers.</param>
         private void SetSubscriptionToSharedKeyboardEvents(bool subscribe)
         {
+            _globalKeyMouseEvents.KeyDown -= OnKeyDownShared;
+            _globalKeyMouseEvents.KeyUp -= OnKeyUpShared;
+
             if (subscribe)
             {
                 _globalKeyMouseEvents.KeyDown += OnKeyDownShared;
                 _globalKeyMouseEvents.KeyUp += OnKeyUpShared;
 
-            }
-            else
-            {
-                _globalKeyMouseEvents.KeyDown -= OnKeyDownShared;
-                _globalKeyMouseEvents.KeyUp -= OnKeyUpShared;
             }
         }
 
@@ -300,6 +311,9 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <param name="subscribe">Sets the subscription status of the global key listeners.</param>
         private void SetSubscriptionToRecordingKeyboardEvents(bool subscribe)
         {
+            _globalKeyMouseEvents.KeyDown -= OnKeyDownAddRecordedAction;
+            _globalKeyMouseEvents.KeyUp -= OnKeyUpAddRecordedAction;
+
             if (subscribe)
             {
                 // Reset subscription to shared keyboard events so that the shared
@@ -308,12 +322,6 @@ namespace MouseRecorder.CSharp.Business.Services
                 _globalKeyMouseEvents.KeyDown += OnKeyDownAddRecordedAction;
                 _globalKeyMouseEvents.KeyUp += OnKeyUpAddRecordedAction;
                 SetSubscriptionToSharedKeyboardEvents(true);
-
-            }
-            else
-            {
-                _globalKeyMouseEvents.KeyDown -= OnKeyDownAddRecordedAction;
-                _globalKeyMouseEvents.KeyUp -= OnKeyUpAddRecordedAction;
             }
         }
 
@@ -323,19 +331,17 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <param name="subscribe">Sets the subscription status of the global mouse listeners.</param>
         private void SetSubscriptionToRecordingMouseEvents(bool subscribe)
         {
+            _globalKeyMouseEvents.MouseDown -= OnMouseDownAddRecordedAction;
+            _globalKeyMouseEvents.MouseUp -= OnMouseUpAddRecordedAction;
+            _globalKeyMouseEvents.MouseMove -= OnMouseMoveAddRecordedAction;
+            _globalKeyMouseEvents.MouseWheel -= OnMouseWheelAddRecordedAction;
+
             if (subscribe)
             {
                 _globalKeyMouseEvents.MouseDown += OnMouseDownAddRecordedAction;
                 _globalKeyMouseEvents.MouseUp += OnMouseUpAddRecordedAction;
                 _globalKeyMouseEvents.MouseMove += OnMouseMoveAddRecordedAction;
                 _globalKeyMouseEvents.MouseWheel += OnMouseWheelAddRecordedAction;
-            }
-            else
-            {
-                _globalKeyMouseEvents.MouseDown -= OnMouseDownAddRecordedAction;
-                _globalKeyMouseEvents.MouseUp -= OnMouseUpAddRecordedAction;
-                _globalKeyMouseEvents.MouseMove -= OnMouseMoveAddRecordedAction;
-                _globalKeyMouseEvents.MouseWheel -= OnMouseWheelAddRecordedAction;
             }
         }
 
@@ -345,13 +351,11 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <param name="subscribe">Sets the subscription status of the global key combination listeners.</param>
         private void SetSubscriptionToStartRecordingCombinationEvents(bool subscribe)
         {
-            if (subscribe)
+            _globalKeyMouseEvents.KeyDown -= OnKeyDownCheckIfStartRecordingCombinationPressed;
+
+            if (subscribe && _startRecordingCombination != null)
             {
                 _globalKeyMouseEvents.KeyDown += OnKeyDownCheckIfStartRecordingCombinationPressed;
-            }
-            else
-            {
-                _globalKeyMouseEvents.KeyDown -= OnKeyDownCheckIfStartRecordingCombinationPressed;
             }
         }
 
@@ -361,18 +365,16 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <param name="subscribe">Sets the subscription status of the global key combination listeners.</param>
         private void SetSubscriptionToStopRecordingCombinationEvents(bool subscribe)
         {
-            if (subscribe)
+            _globalKeyMouseEvents.KeyDown -= OnKeyDownCheckIfStopRecordingCombinationPressed;
+
+            if (subscribe && _stopRecordingCombination != null)
             {
                 _globalKeyMouseEvents.KeyDown += OnKeyDownCheckIfStopRecordingCombinationPressed;
-            }
-            else
-            {
-                _globalKeyMouseEvents.KeyDown -= OnKeyDownCheckIfStopRecordingCombinationPressed;
             }
         }
 
         /// <summary>
-        /// Event handler for key presses that is active most of the time.
+        /// Event handler for key presses that shares functionality whether the service is recording or not.
         /// </summary>
         private void OnKeyDownShared(object sender, KeyEventArgs e)
         {
@@ -383,7 +385,7 @@ namespace MouseRecorder.CSharp.Business.Services
         }
 
         /// <summary>
-        /// Event handler for key releases that is active most of the time.
+        /// Event handler for key releases that shares functionality whether the service is recording or not.
         /// </summary>
         private void OnKeyUpShared(object sender, KeyEventArgs e)
         {
@@ -398,7 +400,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         private void OnKeyDownCheckIfStartRecordingCombinationPressed(object sender, KeyEventArgs e)
         {
-            OnCombinationPerformAction(_subscribedConfiguration.StartRecordingCombination, () => StartRecording());
+            OnCombinationPerformAction(_startRecordingCombination, () => StartRecording());
         }
 
         /// <summary>
@@ -406,7 +408,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         private void OnKeyDownCheckIfStopRecordingCombinationPressed(object sender, KeyEventArgs e)
         {
-            OnCombinationPerformAction(_subscribedConfiguration.StopRecordingCombination, () => StopRecording());
+            OnCombinationPerformAction(_stopRecordingCombination, () => StopRecording());
         }
         
         /// <summary>
@@ -505,5 +507,7 @@ namespace MouseRecorder.CSharp.Business.Services
 
             AdditionalActionOnMouseWheel?.Invoke(e);
         }
+
+        #endregion
     }
 }

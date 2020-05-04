@@ -23,24 +23,24 @@ namespace MouseRecorder.CSharp.App.Views
         {
             InitializeComponent();
 
-            var config = new RecordingConfiguration
-            {
-                RecordKeyboardInputs = true,
-                RecordMouseInputs = true,
-                StartRecordingCombination = Combination.TriggeredBy(Keys.A).With(Keys.S),
-                StopRecordingCombination = Combination.TriggeredBy(Keys.A).With(Keys.S)
-            };
-
             // Set the datacontext
             _model = new RecordViewModel();
             DataContext = _model;
 
             // Subscribe to the recording service
             _service = new GlobalRecordingService();
-            _service.Subscribe(config); 
+            _service.RegisterCombinations(Combination.TriggeredBy(Keys.A).With(Keys.S), Combination.TriggeredBy(Keys.A).With(Keys.S));
+
+            SubscribeToStartStopRecordingEvents();
         }
 
         #region Recorded Key Mouse Event Handlers
+
+        private void SubscribeToStartStopRecordingEvents()
+        {
+            _service.AdditionalActionOnStartRecording = OnStartRecording;
+            _service.AdditionalActionOnStopRecording = OnStopRecording;
+        }
 
         /// <summary>
         /// Subscribes additional actions for the recorded key mouse events.
@@ -53,8 +53,6 @@ namespace MouseRecorder.CSharp.App.Views
             _service.AdditionalActionOnMouseDown = OnMouseDown;
             _service.AdditionalActionOnMouseUp = OnMouseUp;
             _service.AdditionalActionOnMouseWheel = OnMouseWheel;
-            _service.AdditionalActionOnStartRecording = OnStartRecording;
-            _service.AdditionalActionOnStopRecording = OnStopRecording;
         }
 
         private void UnsubscribeToKeyMouseEvents()
@@ -65,8 +63,6 @@ namespace MouseRecorder.CSharp.App.Views
             _service.AdditionalActionOnMouseDown = null;
             _service.AdditionalActionOnMouseUp = null;
             _service.AdditionalActionOnMouseWheel = null;
-            _service.AdditionalActionOnStartRecording = null;
-            _service.AdditionalActionOnStopRecording = null;
         }
 
         /// <summary>
@@ -132,6 +128,8 @@ namespace MouseRecorder.CSharp.App.Views
             {
                 _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording started..");
                 ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
+
+                _model.IsRecording = true;
             }
         }
 
@@ -144,6 +142,8 @@ namespace MouseRecorder.CSharp.App.Views
             {
                 _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording stopped..");
                 ListViewActions.ScrollIntoView(_model.Actions[_model.Actions.Count - 1]);
+
+                _model.IsRecording = false;
             }
         }
 
@@ -158,12 +158,20 @@ namespace MouseRecorder.CSharp.App.Views
 
         private void BtnRecord_Clicked(object sender, RoutedEventArgs e)
         {
-            StartRecording();
+            if (!_model.IsRecording)
+            { 
+                _service.StartRecording();
+                OnStartRecording();
+            }
         }
 
         private void BtnStop_Clicked(object sender, RoutedEventArgs e)
         {
-            StopRecording();
+            if (_model.IsRecording)
+            {
+                _service.StopRecording();
+                OnStopRecording();
+            }
         }
 
         private void CheckBoxShowRecordedActions_Changed(object sender, RoutedEventArgs e)
@@ -183,17 +191,5 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         #endregion
-
-        private void StartRecording()
-        {
-            _model.IsRecording = true;
-            _service.StartRecording();
-        }
-
-        private void StopRecording()
-        {
-            _model.IsRecording = false;
-            _service.StopRecording();
-        }
     }
 }
