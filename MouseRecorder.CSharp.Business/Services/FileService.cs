@@ -142,6 +142,8 @@ namespace MouseRecorder.CSharp.Business.Services
                 FilePath = recording.FilePath ?? throw new InvalidDataException("Unable to serialize the object because it is invalid."),
                 Date = recording.Date,
                 Zones = recording.Zones.OfType<ClickZone>()?.ToList() ?? throw new InvalidDataException("Unable to serialize the object because it is invalid."),
+                RecordingStarts = recording.Actions.OfType<RecordedStart>().ToList(),
+                RecordingStops = recording.Actions.OfType<RecordedStop>().ToList(),
                 KeyboardButtonPresses = recording.Actions.OfType<RecordedKeyboardButtonPress>().ToList(),
                 KeyboardButtonReleases = recording.Actions.OfType<RecordedKeyboardButtonRelease>().ToList(),
                 MouseButtonPresses = recording.Actions.OfType<RecordedMouseButtonPress>().ToList(),
@@ -184,6 +186,8 @@ namespace MouseRecorder.CSharp.Business.Services
         private IRecording Deserialize(SerializedRecording recording)
         {
             var actions = new List<IRecordedAction>();
+            actions.AddRange(recording.RecordingStarts ?? throw new FileLoadException("There was an issue deserializing the object."));
+            actions.AddRange(recording.RecordingStops ?? throw new FileLoadException("There was an issue deserializing the object."));
             actions.AddRange(recording.KeyboardButtonPresses ?? throw new FileLoadException("There was an issue deserializing the object."));
             actions.AddRange(recording.KeyboardButtonReleases ?? throw new FileLoadException("There was an issue deserializing the object."));
             actions.AddRange(recording.MouseButtonPresses ?? throw new FileLoadException("There was an issue deserializing the object."));

@@ -11,6 +11,8 @@ namespace MouseRecorder.CSharp.Business.ExportObjects
         public string FilePath { get; set; }
         public DateTime Date { get; set; }
         public List<ClickZone> Zones { get; set; }
+        public List<RecordedStart> RecordingStarts { get; set; }
+        public List<RecordedStop> RecordingStops { get; set; }
         public List<RecordedKeyboardButtonPress> KeyboardButtonPresses { get; set; }
         public List<RecordedKeyboardButtonRelease> KeyboardButtonReleases { get; set; }
         public List<RecordedMouseButtonPress> MouseButtonPresses { get; set; }
