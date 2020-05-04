@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:wpfControlBindings="clr-namespace:Framework.Generic.WPF.Control_Bindings;assembly=Framework.Generic"
+             Width="500"
+             Height="650"
              mc:Ignorable="d">
     <UserControl.Resources>
         <wpfControlBindings:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
@@ -11,10 +13,10 @@
     <DockPanel Margin="0,0,2,0">
         <Menu DockPanel.Dock="Top" FontSize="15" Background="#FFF7F7F7" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}">
             <MenuItem Header="File">
-                <MenuItem Header="Save Recording" />
-                <MenuItem Header="Load Recording" />
+                <MenuItem Name="MenuFileSave" Header="Save Recording" IsEnabled="{Binding CanSaveRecording}" Click="MenuFileSave_Click"/>
+                <MenuItem Header="Load Recording" IsEnabled="False"/>
                 <Separator/>
-                <MenuItem Header="Exit" />
+                <MenuItem Name="MenuFileExit" Header="Exit" Click="MenuFileExit_Click" />
             </MenuItem>
         </Menu>
         <DockPanel>
@@ -34,7 +36,7 @@
                         <TextBlock Padding="2" HorizontalAlignment="Center">View</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="BtnNew" Grid.Column="1" ToolTip="New tooltip.." Margin="3, 0, 0, 0" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}">
+                <Button Name="BtnNew" Grid.Column="1" ToolTip="New tooltip.." Margin="3, 0, 0, 0" IsEnabled="{Binding CanSaveRecording}" Click="BtnNew_Click">
                     <StackPanel Orientation="Vertical">
                         <Image Source="../Images/New.png" Margin="5,11,5,0"/>
                         <TextBlock Padding="2" HorizontalAlignment="Center">New</TextBlock>

@@ -1,30 +1,15 @@
-﻿<Window x:Class="MouseRecorder.CSharp.App.MainWindow"
+﻿<Window x:Class="MouseRecorder.CSharp.App.Views.PromptYesNo"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MouseRecorder.CSharp.App"
-        xmlns:viewmodels="clr-namespace:MouseRecorder.CSharp.App.ViewModel"
-        xmlns:views="clr-namespace:MouseRecorder.CSharp.App.Views"
+        xmlns:local="clr-namespace:MouseRecorder.CSharp.App.Views"
         mc:Ignorable="d"
-        Title="Mouse Recorder by Steve Whitmire" 
+        Title="PromptYesNoCancel" Width="353" SizeToContent="Height"
         Background="#FFF7F7F7"
-        FontSize="13"
-        SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Closing="Window_Closing">
-    <Window.DataContext>
-        <viewmodels:MainWindowViewModel/>
-    </Window.DataContext>
+        FontSize="15">
     <Window.Resources>
-        <DataTemplate x:Name="recordViewTemplate" DataType="{x:Type viewmodels:RecordViewModel}">
-            <!--<views:RecordView DataContext="{Binding DataContext}"/>-->
-            <views:RecordView/>
-        </DataTemplate>
-        <DataTemplate x:Name="playbackViewTemplate" DataType="{x:Type viewmodels:PlaybackViewModel}">
-            <!--<views:PlaybackView DataContext="{Binding DataContext}"/>-->
-            <views:PlaybackView/>
-        </DataTemplate>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Gray" />
             <Setter Property="Foreground" Value="White" />
@@ -62,6 +47,11 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <!--<ContentControl Content="{Binding Content}"/>-->
-    <ContentPresenter Content="{Binding Content}"/>
+    <DockPanel Margin="5,5,5,0">
+        <TextBlock Name="txtQuestion" Text="Here is some example text that would show up in the prompt..." TextWrapping="Wrap" DockPanel.Dock="Top" Margin="5,5,5,25"/>
+        <StackPanel Orientation="Horizontal" Margin="0,1,1,15" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Height="30">
+            <Button Content="Yes" IsDefault="True" Margin="1" Width="75" Name="BtnYes" Click="BtnYes_Click"/>
+            <Button Content="No" IsDefault="True" Margin="1" Width="75" Name="BtnNo" Click="BtnNo_Click" />
+        </StackPanel>
+    </DockPanel>
 </Window>

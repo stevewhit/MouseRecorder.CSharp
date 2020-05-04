@@ -17,7 +17,5 @@ namespace MouseRecorder.CSharp.App.ViewModel
                 return windowViewModel?.NavigateCommand;
             }
         }
-
-        
     }
 }

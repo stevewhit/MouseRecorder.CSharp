@@ -27,5 +27,10 @@ namespace MouseRecorder.CSharp.App
         {
             InitializeComponent();
         }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Dispatcher.InvokeShutdown();
+        }
     }
 }

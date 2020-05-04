@@ -1,6 +1,7 @@
 ﻿using MouseRecorder.CSharp.DataModel.Configuration;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace MouseRecorder.CSharp.App.ViewModel
 {
@@ -10,7 +11,16 @@ namespace MouseRecorder.CSharp.App.ViewModel
         public bool IsRecording
         {
             get => _isRecording;
-            set => Set(ref _isRecording, value);
+            set
+            { 
+                Set(ref _isRecording, value); 
+                RaisePropertyChanged("CanSaveRecording"); 
+            }
+        }
+
+        public bool CanSaveRecording
+        {
+            get => !_isRecording && (_actions?.Any() ?? false);
         }
 
         private ObservableCollection<string> _actions;
@@ -24,7 +34,7 @@ namespace MouseRecorder.CSharp.App.ViewModel
         public bool ShowRecordedActions 
         {
             get => _showRecordedActions;
-            set => _showRecordedActions = value;// Set(ref _showRecordedActions, value);
+            set => _showRecordedActions = value;
         }
 
         public bool _showStartingPositionOverlay;
@@ -36,7 +46,14 @@ namespace MouseRecorder.CSharp.App.ViewModel
 
         public RecordViewModel()
         {
+            _showRecordedActions = true;
+            ResetActions();
+        }
+
+        public void ResetActions()
+        {
             Actions = new ObservableCollection<string>();
+            RaisePropertyChanged("CanSaveRecording");
         }
     }
 }

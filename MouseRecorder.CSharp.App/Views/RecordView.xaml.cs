@@ -1,7 +1,6 @@
 ﻿using Gma.System.MouseKeyHook;
 using MouseRecorder.CSharp.App.ViewModel;
 using MouseRecorder.CSharp.Business.Services;
-using MouseRecorder.CSharp.DataModel.Configuration;
 using System.Windows;
 using SWControls=System.Windows.Controls;
 using System.Windows.Forms;
@@ -16,6 +15,11 @@ namespace MouseRecorder.CSharp.App.Views
     /// </summary>
     public partial class RecordView : SWControls.UserControl
     {
+        private const string PROMPT_SAVE_BEFORE_CONTINUE = @"Warning: Your current recording progress will be deleted. Would you like to save the recording before continuing?";
+        private static readonly string SAVE_FILE_INITIAL_DIRECTORY = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private static readonly Combination START_KEY_COMBINATION = Combination.TriggeredBy(Keys.A).With(Keys.S);
+        private static readonly Combination STOP_KEY_COMBINATION = Combination.TriggeredBy(Keys.A).With(Keys.S);
+
         private readonly RecordViewModel _model;
         private readonly IGlobalRecordingService _service;
 
@@ -23,13 +27,15 @@ namespace MouseRecorder.CSharp.App.Views
         {
             InitializeComponent();
 
+            Dispatcher.ShutdownStarted += OnDispatcherShutDownStarted;
+
             // Set the datacontext
             _model = new RecordViewModel();
             DataContext = _model;
 
             // Subscribe to the recording service
             _service = new GlobalRecordingService();
-            _service.RegisterCombinations(Combination.TriggeredBy(Keys.A).With(Keys.S), Combination.TriggeredBy(Keys.A).With(Keys.S));
+            _service.RegisterCombinations(START_KEY_COMBINATION, STOP_KEY_COMBINATION);
 
             SubscribeToStartStopRecordingEvents();
         }
@@ -152,26 +158,44 @@ namespace MouseRecorder.CSharp.App.Views
 
         private void BtnView_Clicked(object sender, RoutedEventArgs e)
         {
-            // TODO: prompt to save..?
+            /// Two options here:
+            /// 
+            /// 1. Force the user to save their current recording.
+            /// 
+            /// 2. Allow them to go back-and-forth between playback and recording
+            ///     Pros: Gives user ability to add click-zones post-playback
+            ///           Doesn't require user to save a temporary recording that they may/may not use
+            ///     Cons: PITA
+
             _service.Unsubscribe();
+        }
+
+        private void BtnNew_Click(object sender, RoutedEventArgs e)
+        {
+            // Prompt user to see if they want to save the current recording.
+            var selectedAnswer = PromptYesNoCancel.Prompt(PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
+            if (selectedAnswer == PromptYesNoCancel.DialogAnswer.Yes)
+            {
+                PromptUserWithSaveFileDialog();
+            }
+            else if (selectedAnswer == PromptYesNoCancel.DialogAnswer.No)
+            {
+                // Remove all recorded actions and click-zones.
+                _service.ResetRecordedActions(true);
+                _model.ResetActions();
+            }
         }
 
         private void BtnRecord_Clicked(object sender, RoutedEventArgs e)
         {
-            if (!_model.IsRecording)
-            { 
-                _service.StartRecording();
-                OnStartRecording();
-            }
+            _service.StartRecording();
+            OnStartRecording();
         }
 
         private void BtnStop_Clicked(object sender, RoutedEventArgs e)
         {
-            if (_model.IsRecording)
-            {
-                _service.StopRecording();
-                OnStopRecording();
-            }
+            _service.StopRecording();
+            OnStopRecording();
         }
 
         private void CheckBoxShowRecordedActions_Changed(object sender, RoutedEventArgs e)
@@ -188,6 +212,65 @@ namespace MouseRecorder.CSharp.App.Views
                 throw new NotImplementedException();
             else
                 throw new NotImplementedException();
+        }
+
+        private void MenuFileSave_Click(object sender, RoutedEventArgs e)
+        {
+            PromptUserWithSaveFileDialog();
+        }
+
+        private void MenuFileExit_Click(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.InvokeShutdown();
+        }
+
+        /// <summary>
+        /// Event handler for when the main window is closing that prompts the user to save
+        /// and pending recordings before the window closes.
+        /// </summary>
+        private void OnDispatcherShutDownStarted(object sender, EventArgs e)
+        {
+            if (_model.CanSaveRecording)
+            {
+                // Prompt user to see if they want to save the current recording.
+                var selectedAnswer = PromptYesNo.Prompt(PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
+                if (selectedAnswer == PromptYesNo.DialogAnswer.Yes)
+                {
+                    PromptUserWithSaveFileDialog();
+                }
+            }
+
+            _service.Unsubscribe();
+        }
+
+        #endregion
+        #region Additional Helper Methods
+
+        private void PromptUserWithSaveFileDialog()
+        {
+            // Unsubscribe from all input event handlers so the filename
+            // doesn't trigger the recording to start/stop.
+            _service.Unsubscribe();
+
+            // Prompt user for file save location.
+            var saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save Recording..",
+                Filter = "Mouse Recorder Recording (*.recording) | *.recording",
+                InitialDirectory = SAVE_FILE_INITIAL_DIRECTORY
+            };
+
+            // If a path is chosen, save the file and reset the recorded actions.
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                _service.Save(saveFileDialog.FileName);
+                _service.ResetRecordedActions();
+
+                _model.ResetActions();
+            }
+
+            // Re-register the start/stop key combinations so they can be listened for.
+            _service.RegisterCombinations(START_KEY_COMBINATION, STOP_KEY_COMBINATION);
         }
 
         #endregion
