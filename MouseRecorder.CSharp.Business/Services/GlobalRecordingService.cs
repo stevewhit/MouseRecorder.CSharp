@@ -1,11 +1,11 @@
 ﻿using Framework.Generic.Utility;
+using Framework.Generic.Graphics;
 using Gma.System.MouseKeyHook;
 using MouseRecorder.CSharp.DataModel.Actions;
 using MouseRecorder.CSharp.DataModel.Configuration;
 using MouseRecorder.CSharp.DataModel.Zone;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -311,7 +311,7 @@ namespace MouseRecorder.CSharp.Business.Services
         }
 
         #endregion
-        #region Subscription Helpers
+        #region Subscription Event Handlers
         /// <summary>
         /// Unsubscribes the recording from all key and mouse event handlers.
         /// </summary>
@@ -516,7 +516,7 @@ namespace MouseRecorder.CSharp.Business.Services
             {
                 TimeRecorded = SystemTime.Now().Ticks,
                 Button = e.Button,
-                PixelColor = Color.Red
+                PixelARGBValue = Monitor.GetPixelARGB(e.X, e.Y)
             });
 
             AdditionalActionOnMouseDown?.Invoke(e);
@@ -530,8 +530,7 @@ namespace MouseRecorder.CSharp.Business.Services
             _currentRecording.Actions.Add(new RecordedMouseButtonRelease()
             {
                 TimeRecorded = SystemTime.Now().Ticks,
-                Button = e.Button,
-                PixelColor = Color.Red
+                Button = e.Button
             });
 
             AdditionalActionOnMouseUp?.Invoke(e);

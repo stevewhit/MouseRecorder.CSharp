@@ -54,7 +54,7 @@
                         <TextBlock Padding="2" HorizontalAlignment="Center">Stop</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="BtnZone" Grid.Column="4" ToolTip="New tooltip.." Margin="3, 0, 0, 0" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}">
+                <Button Name="BtnZone" Grid.Column="4" ToolTip="New tooltip.." Margin="3, 0, 0, 0" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}" Click="BtnZone_Click">
                     <StackPanel Orientation="Vertical">
                         <Image Source="../Images/Zone.png" Margin="5, 10, 5, 0"/>
                         <TextBlock Padding="2" HorizontalAlignment="Center">Zone</TextBlock>

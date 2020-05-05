@@ -42,6 +42,9 @@ namespace MouseRecorder.CSharp.App.Views
 
         #region Recorded Key Mouse Event Handlers
 
+        /// <summary>
+        /// Subscribes the start/stop recording event handlers to the recording service.
+        /// </summary>
         private void SubscribeToStartStopRecordingEvents()
         {
             _service.AdditionalActionOnStartRecording = OnStartRecording;
@@ -61,6 +64,9 @@ namespace MouseRecorder.CSharp.App.Views
             _service.AdditionalActionOnMouseWheel = OnMouseWheel;
         }
 
+        /// <summary>
+        /// Unsubscribes all front-end key/mouse events from the recording service.
+        /// </summary>
         private void UnsubscribeToKeyMouseEvents()
         {
             _service.AdditionalActionOnKeyDown = null;
@@ -72,7 +78,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when a key is pressed.
         /// </summary>
         private void OnKeyDown(KeyEventArgs e)
         {
@@ -81,7 +87,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when a key is released.
         /// </summary>
         private void OnKeyUp(KeyEventArgs e)
         {
@@ -90,7 +96,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when the mouse is moved
         /// </summary>
         private void OnMouseMove(MouseEventArgs e)
         {
@@ -99,7 +105,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when a mouse button is pressed.
         /// </summary>
         private void OnMouseDown(MouseEventArgs e)
         {
@@ -108,7 +114,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when a mouse button is released.
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
@@ -117,7 +123,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when the mouse wheel is scrolled.
         /// </summary>
         private void OnMouseWheel(MouseEventArgs e)
         {
@@ -126,7 +132,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when the recording is started.
         /// </summary>
         private void OnStartRecording()
         {
@@ -140,7 +146,7 @@ namespace MouseRecorder.CSharp.App.Views
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when the recording is stopped.
         /// </summary>
         private void OnStopRecording()
         {
@@ -198,6 +204,11 @@ namespace MouseRecorder.CSharp.App.Views
             OnStopRecording();
         }
 
+        private void BtnZone_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void CheckBoxShowRecordedActions_Changed(object sender, RoutedEventArgs e)
         {
             if (_model.ShowRecordedActions)
@@ -246,6 +257,9 @@ namespace MouseRecorder.CSharp.App.Views
         #endregion
         #region Additional Helper Methods
 
+        /// <summary>
+        /// Prompts the user with the save file dialog to save the recording.
+        /// </summary>
         private void PromptUserWithSaveFileDialog()
         {
             // Unsubscribe from all input event handlers so the filename

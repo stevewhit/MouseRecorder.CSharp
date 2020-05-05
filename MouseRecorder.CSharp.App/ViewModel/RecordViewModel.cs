@@ -1,6 +1,4 @@
-﻿using MouseRecorder.CSharp.DataModel.Configuration;
-using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace MouseRecorder.CSharp.App.ViewModel
