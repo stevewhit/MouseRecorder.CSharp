@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace MouseRecorder.CSharp.DataModel.Actions
 {
     public interface IRecordedKeyboardAction : IKeyboardAction, IRecordedAction

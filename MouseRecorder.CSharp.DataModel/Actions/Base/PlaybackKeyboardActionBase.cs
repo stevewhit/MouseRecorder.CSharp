@@ -1,5 +1,4 @@
 ﻿
-
 namespace MouseRecorder.CSharp.DataModel.Actions
 {
     public interface IPlaybackKeyboardAction : IPlaybackAction, IKeyboardAction

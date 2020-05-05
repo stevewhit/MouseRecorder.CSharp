@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-
+﻿
 namespace MouseRecorder.CSharp.DataModel.Actions
 {
     public interface IRecordedMouseAction : IMouseAction, IRecordedAction
