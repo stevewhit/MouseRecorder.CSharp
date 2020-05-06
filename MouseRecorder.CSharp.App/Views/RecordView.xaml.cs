@@ -24,7 +24,7 @@ namespace MouseRecorder.CSharp.App.Views
         private readonly RecordViewModel _model;
         private readonly IGlobalRecordingService _service;
 
-        private readonly IList<ClickZoneView> _managedClickZoneViews;
+        private IList<ClickZoneView> _managedClickZoneViews;
 
         public RecordView()
         {
@@ -136,38 +136,6 @@ namespace MouseRecorder.CSharp.App.Views
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
-        /// <summary>
-        /// Event handler for when the recording is started.
-        /// </summary>
-        private void OnStartRecording()
-        {
-            if (!_model.IsRecording)
-            {
-                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording started..");
-                ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
-
-                // Disable each of the click-zone windows.
-                _managedClickZoneViews.ForEach(v => v.DisableAndMakeTransparent());
-                _model.IsRecording = true;
-            }
-        }
-
-        /// <summary>
-        /// Event handler for when the recording is stopped.
-        /// </summary>
-        private void OnStopRecording()
-        {
-            if (_model.IsRecording)
-            {
-                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording stopped..");
-                ListViewActions.ScrollIntoView(_model.Actions[_model.Actions.Count - 1]);
-
-                // Enable each of the click-zone windows.
-                _managedClickZoneViews.ForEach(v => v.EnableAndRemoveTransparency());
-                _model.IsRecording = false;
-            }
-        }
-
         #endregion
         #region Control Event Handlers
 
@@ -185,8 +153,8 @@ namespace MouseRecorder.CSharp.App.Views
 
             _service.Unsubscribe();
 
-            // Temp
-            _managedClickZoneViews.ForEach(v => v.Close());
+            // Temp -- change this.
+            ResetRecording();
         }
 
         private void BtnNew_Click(object sender, RoutedEventArgs e)
@@ -200,8 +168,7 @@ namespace MouseRecorder.CSharp.App.Views
             else if (selectedAnswer == PromptYesNoCancelView.DialogAnswer.No)
             {
                 // Remove all recorded actions and click-zones.
-                _service.ResetRecordedActions(true);
-                _model.ResetActions();
+                ResetRecording();
             }
         }
 
@@ -276,6 +243,38 @@ namespace MouseRecorder.CSharp.App.Views
         #region Additional Helper Methods
 
         /// <summary>
+        /// Event handler for when the recording is started.
+        /// </summary>
+        private void OnStartRecording()
+        {
+            if (!_model.IsRecording)
+            {
+                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording started..");
+                ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
+
+                // Disable each of the click-zone windows.
+                _managedClickZoneViews.ForEach(v => v.DisableAndMakeTransparent());
+                _model.IsRecording = true;
+            }
+        }
+
+        /// <summary>
+        /// Event handler for when the recording is stopped.
+        /// </summary>
+        private void OnStopRecording()
+        {
+            if (_model.IsRecording)
+            {
+                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording stopped..");
+                ListViewActions.ScrollIntoView(_model.Actions[_model.Actions.Count - 1]);
+
+                // Enable each of the click-zone windows.
+                _managedClickZoneViews.ForEach(v => v.EnableAndRemoveTransparency());
+                _model.IsRecording = false;
+            }
+        }
+
+        /// <summary>
         /// Prompts the user with the save file dialog to save the recording.
         /// </summary>
         private void PromptAndSaveRecording()
@@ -297,13 +296,24 @@ namespace MouseRecorder.CSharp.App.Views
             {
                 _service.AddClickZones(_managedClickZoneViews.Select(v => v.GetWindowRectangle()));
                 _service.Save(saveFileDialog.FileName);
-                _service.ResetRecordedActions();
 
-                _model.ResetActions();
+                ResetRecording();
             }
 
             // Re-register the start/stop key combinations so they can be listened for.
             _service.RegisterCombinations(START_KEY_COMBINATION, STOP_KEY_COMBINATION);
+        }
+
+        /// <summary>
+        /// Resets the service and view model, and closes and removes and click-zone windows.
+        /// </summary>
+        private void ResetRecording()
+        {
+            _service.ResetRecordedActions(true);
+            _model.ResetActions();
+
+            _managedClickZoneViews?.ForEach(v => v.Close());
+            _managedClickZoneViews = new List<ClickZoneView>();
         }
 
         #endregion
