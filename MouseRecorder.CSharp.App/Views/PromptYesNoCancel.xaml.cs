@@ -5,7 +5,7 @@ namespace MouseRecorder.CSharp.App.Views
     /// <summary>
     /// Interaction logic for PromptYesNoCancel.xaml
     /// </summary>
-    public partial class PromptYesNoCancel : Window
+    public partial class PromptYesNoCancelView : Window
     {
         public enum PromptType
         {
@@ -22,7 +22,7 @@ namespace MouseRecorder.CSharp.App.Views
 
         public DialogAnswer SelectedChoice { get; set; }
 
-        public PromptYesNoCancel(PromptType type, string question, string title, Window owner = null)
+        public PromptYesNoCancelView(PromptType type, string question, string title, Window owner = null)
         {
             InitializeComponent();
 
@@ -42,7 +42,7 @@ namespace MouseRecorder.CSharp.App.Views
 
         public static DialogAnswer Prompt(PromptType type, string question, string title)
         {
-            var prompt = new PromptYesNoCancel(type, question, title);
+            var prompt = new PromptYesNoCancelView(type, question, title);
             prompt.ShowDialog();
 
             if (prompt.DialogResult == true)

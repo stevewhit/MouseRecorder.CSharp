@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System;
 using Framework.Generic.Utility;
+using System.Collections.Generic;
 
 namespace MouseRecorder.CSharp.App.Views
 {
@@ -23,6 +24,8 @@ namespace MouseRecorder.CSharp.App.Views
         private readonly RecordViewModel _model;
         private readonly IGlobalRecordingService _service;
 
+        private readonly IList<ClickZoneView> _managedClickZoneViews;
+
         public RecordView()
         {
             InitializeComponent();
@@ -32,6 +35,8 @@ namespace MouseRecorder.CSharp.App.Views
             // Set the datacontext
             _model = new RecordViewModel();
             DataContext = _model;
+
+            _managedClickZoneViews = new List<ClickZoneView>();
 
             // Subscribe to the recording service
             _service = new GlobalRecordingService();
@@ -141,6 +146,8 @@ namespace MouseRecorder.CSharp.App.Views
                 _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording started..");
                 ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
 
+                // Disable each of the click-zone windows.
+                _managedClickZoneViews.ForEach(v => v.DisableAndMakeTransparent());
                 _model.IsRecording = true;
             }
         }
@@ -155,6 +162,8 @@ namespace MouseRecorder.CSharp.App.Views
                 _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording stopped..");
                 ListViewActions.ScrollIntoView(_model.Actions[_model.Actions.Count - 1]);
 
+                // Enable each of the click-zone windows.
+                _managedClickZoneViews.ForEach(v => v.EnableAndRemoveTransparency());
                 _model.IsRecording = false;
             }
         }
@@ -172,19 +181,23 @@ namespace MouseRecorder.CSharp.App.Views
             ///     Pros: Gives user ability to add click-zones post-playback
             ///           Doesn't require user to save a temporary recording that they may/may not use
             ///     Cons: PITA
+            ///           MainWindow stores managed ClickZones and current recording/recording service..
 
             _service.Unsubscribe();
+
+            // Temp
+            _managedClickZoneViews.ForEach(v => v.Close());
         }
 
         private void BtnNew_Click(object sender, RoutedEventArgs e)
         {
             // Prompt user to see if they want to save the current recording.
-            var selectedAnswer = PromptYesNoCancel.Prompt(PromptYesNoCancel.PromptType.YesNoCancel, PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
-            if (selectedAnswer == PromptYesNoCancel.DialogAnswer.Yes)
+            var selectedAnswer = PromptYesNoCancelView.Prompt(PromptYesNoCancelView.PromptType.YesNoCancel, PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
+            if (selectedAnswer == PromptYesNoCancelView.DialogAnswer.Yes)
             {
-                PromptUserWithSaveFileDialog();
+                PromptAndSaveRecording();
             }
-            else if (selectedAnswer == PromptYesNoCancel.DialogAnswer.No)
+            else if (selectedAnswer == PromptYesNoCancelView.DialogAnswer.No)
             {
                 // Remove all recorded actions and click-zones.
                 _service.ResetRecordedActions(true);
@@ -206,7 +219,12 @@ namespace MouseRecorder.CSharp.App.Views
 
         private void BtnZone_Click(object sender, RoutedEventArgs e)
         {
+            var startupLocation = Control.MousePosition;
+            startupLocation.X += 50;
 
+            // Create the view and add it to the list of managed views
+            var view = ClickZoneView.Show(startupLocation, 100, 100, true);
+            _managedClickZoneViews.Add(view);
         }
 
         private void CheckBoxShowRecordedActions_Changed(object sender, RoutedEventArgs e)
@@ -227,7 +245,7 @@ namespace MouseRecorder.CSharp.App.Views
 
         private void MenuFileSave_Click(object sender, RoutedEventArgs e)
         {
-            PromptUserWithSaveFileDialog();
+            PromptAndSaveRecording();
         }
 
         private void MenuFileExit_Click(object sender, RoutedEventArgs e)
@@ -244,10 +262,10 @@ namespace MouseRecorder.CSharp.App.Views
             if (_model.CanSaveRecording)
             {
                 // Prompt user to see if they want to save the current recording.
-                var selectedAnswer = PromptYesNoCancel.Prompt(PromptYesNoCancel.PromptType.YesNo, PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
-                if (selectedAnswer == PromptYesNoCancel.DialogAnswer.Yes)
+                var selectedAnswer = PromptYesNoCancelView.Prompt(PromptYesNoCancelView.PromptType.YesNo, PROMPT_SAVE_BEFORE_CONTINUE, "Save Recording");
+                if (selectedAnswer == PromptYesNoCancelView.DialogAnswer.Yes)
                 {
-                    PromptUserWithSaveFileDialog();
+                    PromptAndSaveRecording();
                 }
             }
 
@@ -260,7 +278,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// <summary>
         /// Prompts the user with the save file dialog to save the recording.
         /// </summary>
-        private void PromptUserWithSaveFileDialog()
+        private void PromptAndSaveRecording()
         {
             // Unsubscribe from all input event handlers so the filename
             // doesn't trigger the recording to start/stop.
@@ -277,6 +295,7 @@ namespace MouseRecorder.CSharp.App.Views
             // If a path is chosen, save the file and reset the recorded actions.
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
+                _service.AddClickZones(_managedClickZoneViews.Select(v => v.GetWindowRectangle()));
                 _service.Save(saveFileDialog.FileName);
                 _service.ResetRecordedActions();
 

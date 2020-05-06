@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace MouseRecorder.CSharp.Business.Services
 {
@@ -88,12 +89,26 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <summary>
         /// Removes any existing recorded actions and any click-zones if the <paramref name="removeClickZones"/> flag is set.
         /// </summary>
+        /// <param name="removeClickZones">Flag to indicate if the click-zones should be removed.</param>
         void ResetRecordedActions(bool removeClickZones = true);
 
         /// <summary>
         /// Saves the recording to the desired <paramref name="filePath"/>.
         /// </summary>
+        /// <param name="filePath">The file path where the recording should be saved.</param>
         void Save(string filePath);
+
+        /// <summary>
+        /// Adds a click-zone rectangle to the recording.
+        /// </summary>
+        /// <param name="clickZoneRectangle">The click-zone rectangle to add to the recording.</param>
+        void AddClickZone(Rectangle clickZoneRectangle);
+
+        /// <summary>
+        /// Adds a range of click-zone rectangles to the recording.
+        /// </summary>
+        /// <param name="clickZoneRectangles">The click-zone rectangles to add to the recording.</param>
+        void AddClickZones(IEnumerable<Rectangle> clickZoneRectangles);
     }
 
     public class GlobalRecordingService : IGlobalRecordingService
@@ -279,6 +294,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <summary>
         /// Removes any existing recorded actions and any click-zones if the <paramref name="removeClickZones"/> flag is set.
         /// </summary>
+        /// <param name="removeClickZones">Flag to indicate if the click-zones should be removed.</param>
         public void ResetRecordedActions(bool removeClickZones=true)
         {
             if (_isRecording)
@@ -296,6 +312,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <summary>
         /// Saves the recording to the desired <paramref name="filePath"/>.
         /// </summary>
+        /// <param name="filePath">The file path where the recording should be saved.</param>
         public void Save(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
@@ -308,6 +325,27 @@ namespace MouseRecorder.CSharp.Business.Services
 
             // Save the recording.
             _fileService.SaveRecording(_currentRecording);
+        }
+
+        /// <summary>
+        /// Adds a click-zone rectangle to the recording.
+        /// </summary>
+        /// <param name="clickZoneRectangle">The click-zone rectangle to add to the recording.</param>
+        public void AddClickZone(Rectangle clickZoneRectangle)
+        {
+            _currentRecording.Zones.Add(new ClickZone() { Shape = clickZoneRectangle });
+        }
+
+        /// <summary>
+        /// Adds a range of click-zone rectangles to the recording.
+        /// </summary>
+        /// <param name="clickZoneRectangles">The click-zone rectangles to add to the recording.</param>
+        public void AddClickZones(IEnumerable<Rectangle> clickZoneRectangles)
+        {
+            if (clickZoneRectangles == null)
+                throw new ArgumentNullException(nameof(clickZoneRectangles));
+
+            clickZoneRectangles.ForEach(r => AddClickZone(r));
         }
 
         #endregion
