@@ -94,7 +94,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnKeyDown(KeyEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Down: {e.KeyCode.Consolidate().GetKeyDescription()}");
+            _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Key Down: {e.KeyCode.Consolidate().GetKeyDescription()}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -103,7 +103,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnKeyUp(KeyEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Up: {e.KeyCode.Consolidate().GetKeyDescription()}");
+            _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Key Up: {e.KeyCode.Consolidate().GetKeyDescription()}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -112,7 +112,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseMove(MouseEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Move: {e.Location}");
+            _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Mouse Move: {e.Location}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -121,7 +121,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseDown(MouseEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Down: {e.Button}");
+            _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Mouse Down: {e.Button}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -130,7 +130,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Up: {e.Button}");
+            _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Mouse Up: {e.Button}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -139,7 +139,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnMouseWheel(MouseEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Mouse Wheel: {e.Delta}");
+            _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Mouse Wheel: {e.Delta}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -292,7 +292,7 @@ namespace MouseRecorder.CSharp.App.Views
         {
             if (!_model.IsRecording)
             {
-                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording started..");
+                _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Recording started..");
                 ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
 
                 // Disable each of the click-zone windows.
@@ -308,7 +308,7 @@ namespace MouseRecorder.CSharp.App.Views
         {
             if (_model.IsRecording)
             {
-                _model.Actions.Add($"{SystemTime.Now().Ticks} - Recording stopped..");
+                _model.Actions.Add($"{SystemTime.Stopwatch.Elapsed.Ticks} - Recording stopped..");
                 ListViewActions.ScrollIntoView(_model.Actions[_model.Actions.Count - 1]);
 
                 // Enable each of the click-zone windows.

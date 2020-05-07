@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace MouseRecorder.CSharp.Business.Services
 {
@@ -190,6 +191,10 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             ResetRecordedActions();
+
+            // Initialize the system stopwatch.
+            // Note: Using a stopwatch for higher-resolution timing rather than DateTime.Now
+            SystemTime.Stopwatch = new Stopwatch();
         }
 
         #region IGlobalRecordingService Methods
@@ -252,8 +257,10 @@ namespace MouseRecorder.CSharp.Business.Services
             // Add object to list of recorded actions.
             _currentRecording.Actions.Add(new RecordedStart() 
             { 
-                TimeRecorded = SystemTime.Now().Ticks 
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks
             });
+
+            SystemTime.Stopwatch.Start();
 
             // Invoke the added action
             AdditionalActionOnStartRecording?.Invoke();
@@ -268,12 +275,13 @@ namespace MouseRecorder.CSharp.Business.Services
             if (!_isRecording)
                 return;
 
+            SystemTime.Stopwatch.Stop();
             _isRecording = false;
 
             // Add object to list of recorded actions.
             _currentRecording.Actions.Add(new RecordedStop()
             {
-                TimeRecorded = SystemTime.Now().Ticks
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks
             });
 
             // Unsubscribe from any previous key & mouse event handlers.
@@ -515,7 +523,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedKeyboardButtonPress()
             {
-                TimeRecorded = SystemTime.Now().Ticks,
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
                 Key = e.KeyCode.Consolidate()
             });
 
@@ -529,7 +537,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedKeyboardButtonRelease()
             {
-                TimeRecorded = SystemTime.Now().Ticks,
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
                 Key = e.KeyCode.Consolidate()
             });
 
@@ -543,7 +551,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseMove()
             {
-                TimeRecorded = SystemTime.Now().Ticks,
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
                 XCoordinate = e.X,
                 YCoordinate = e.Y
             });
@@ -558,7 +566,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseButtonPress()
             {
-                TimeRecorded = SystemTime.Now().Ticks,
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
                 Button = e.Button,
                 PixelARGBValue = Monitor.GetPixelARGB(e.X, e.Y)
             });
@@ -573,7 +581,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseButtonRelease()
             {
-                TimeRecorded = SystemTime.Now().Ticks,
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
                 Button = e.Button
             });
 
@@ -587,7 +595,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseWheelScroll()
             {
-                TimeRecorded = SystemTime.Now().Ticks,
+                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
                 Delta = e.Delta
             });
 
