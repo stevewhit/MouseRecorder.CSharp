@@ -34,13 +34,13 @@
                     <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="70" />
                 </Grid.ColumnDefinitions>
-                <Button Name="BtnView" Grid.Column="0" ToolTip="New tooltip.." Margin="3,0,0,0" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}" Command="{Binding NavigateCommand}" CommandParameter="1" Click="BtnView_Clicked">
+                <Button Name="BtnView" Grid.Column="0" ToolTip="Change to playback view" Margin="3,0,0,0" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}" Command="{Binding NavigateCommand}" CommandParameter="1" Click="BtnView_Clicked">
                     <StackPanel Orientation="Vertical">
                         <Image Source="../Images/Arrows-Left.png" Margin="5,15,10,0"/>
                         <TextBlock Padding="2" HorizontalAlignment="Center">View</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="BtnNew" Grid.Column="1" ToolTip="New tooltip.." Margin="3, 0, 0, 0" IsEnabled="{Binding CanSaveRecording}" Click="BtnNew_Click">
+                <Button Name="BtnNew" Grid.Column="1" ToolTip="Create a new recording" Margin="3, 0, 0, 0" IsEnabled="{Binding CanSaveRecording}" Click="BtnNew_Click">
                     <StackPanel Orientation="Vertical">
                         <Image Source="../Images/New.png" Margin="5,11,5,0"/>
                         <TextBlock Padding="2" HorizontalAlignment="Center">New</TextBlock>
@@ -57,7 +57,7 @@
                         <TextBlock Padding="2" HorizontalAlignment="Center">Record</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="BtnStop" Grid.Column="3" ToolTip="New tooltip.." Margin="3, 0, 0, 0" IsEnabled="{Binding IsRecording}" ContextMenuService.ShowOnDisabled="True" Click="BtnStop_Clicked" >
+                <Button Name="BtnStop" Grid.Column="3" ToolTip="{Binding BtnStopToolTip}" Margin="3, 0, 0, 0" IsEnabled="{Binding IsRecording}" ContextMenuService.ShowOnDisabled="True" Click="BtnStop_Clicked" >
                     <Button.ContextMenu>
                         <ContextMenu IsEnabled="True">
                             <MenuItem Name="BtnStopConfigure" Header="Configure Hotkeys" Click="BtnStopConfigure_Click"/>
@@ -68,7 +68,7 @@
                         <TextBlock Padding="2" HorizontalAlignment="Center">Stop</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button Name="BtnZone" Grid.Column="4" ToolTip="New tooltip.." Margin="3, 0, 0, 0" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}" Click="BtnZone_Click">
+                <Button Name="BtnZone" Grid.Column="4" ToolTip="Add a new click-zone" Margin="3, 0, 0, 0" IsEnabled="{Binding IsRecording, Converter={StaticResource InvertedBooleanConverter}}" Click="BtnZone_Click">
                     <StackPanel Orientation="Vertical">
                         <Image Source="../Images/Zone.png" Margin="5, 10, 5, 0"/>
                         <TextBlock Padding="2" HorizontalAlignment="Center">Zone</TextBlock>
