@@ -298,6 +298,9 @@ namespace MouseRecorder.CSharp.Business.Services
             // This is especially useful if this method is called numerous times by accident.
             UnsubscribeAllRecordingEventHandlers();
 
+            // Remove the start/stop combination keys from the recording that was just stopped.
+            RemoveStartStopCombinationKeysFromLastRecording();
+
             // Subscribe to the start stop key event handlers.
             SetSubscriptionToPressedKeysKeyboardEvents(true);
             SubscribeToStartStopCombinations();
@@ -616,6 +619,63 @@ namespace MouseRecorder.CSharp.Business.Services
             });
 
             AdditionalActionOnMouseWheel?.Invoke(e);
+        }
+
+        #endregion
+        #region Additional Methods
+
+        private void RemoveStartStopCombinationKeysFromLastRecording()
+        {
+            var lastRecordedStartAction = _currentRecording.Actions.LastOrDefault(a => a is IRecordedStart);
+            var lastRecordingActions = _currentRecording.Actions.Where(a => a.TimeRecorded >= lastRecordedStartAction.TimeRecorded);
+
+            // Serialize the start recording key combination keys
+            var startRecordingKeys = new List<Keys> { _startRecordingCombination.TriggerKey };
+            startRecordingKeys.AddRange(_startRecordingCombination.Chord);
+
+            // Cycle through each of the keys in the start recording key combination, and verify 
+            // that the beginning of the last recording doesn't have a key release before a key press.
+            foreach (var key in startRecordingKeys)
+            {
+                var firstKeyUpAction = lastRecordingActions.FirstOrDefault(a => (a as RecordedKeyboardButtonRelease)?.Key == key);
+                var firstKeyDownAction = lastRecordingActions.FirstOrDefault(a => (a as RecordedKeyboardButtonPress)?.Key == key);
+
+                // If there aren't any key-up actions for this key, skip.
+                if (firstKeyUpAction == null)
+                    continue;
+
+                // If there is a key-up action and no key-down action at all OR
+                // If the key-up action takes place before the first key-down action,
+                //  ==> Remove the first key-up action.
+                else if (firstKeyDownAction == null || firstKeyUpAction.TimeRecorded < firstKeyDownAction.TimeRecorded)
+                {
+                    _currentRecording.Actions.Remove(firstKeyUpAction);
+                }
+            }
+
+            // Serialize the stop recording key combination keys
+            var stopRecordingKeys = new List<Keys> { _stopRecordingCombination.TriggerKey };
+            stopRecordingKeys.AddRange(_stopRecordingCombination.Chord);
+
+            // Cycle through each of the keys in the stop recording key combination, and verify
+            // that the end of the current recording doesn't have a key press before a key release.
+            foreach (var key in stopRecordingKeys)
+            {
+                var lastKeyUpAction = lastRecordingActions.LastOrDefault(a => (a as RecordedKeyboardButtonRelease)?.Key == key);
+                var lastKeyDownAction = lastRecordingActions.LastOrDefault(a => (a as RecordedKeyboardButtonPress)?.Key == key);
+
+                // If there aren't any key-down actions for this key, skip.
+                if (lastKeyDownAction == null)
+                    continue;
+
+                // If there is a key-down action and no key-up action at all OR
+                // If the key-down action takes place after the last key-up action,
+                //  ==> Remove the last key-down action.
+                else if (lastKeyUpAction == null || lastKeyDownAction.TimeRecorded > lastKeyUpAction.TimeRecorded)
+                {
+                    _currentRecording.Actions.Remove(lastKeyDownAction);
+                }
+            }
         }
 
         #endregion
