@@ -8,6 +8,7 @@ using System.Linq;
 using System;
 using Framework.Generic.Utility;
 using System.Collections.Generic;
+using SWInput = System.Windows.Input;
 
 namespace MouseRecorder.CSharp.App.Views
 {
@@ -16,10 +17,15 @@ namespace MouseRecorder.CSharp.App.Views
     /// </summary>
     public partial class RecordView : SWControls.UserControl
     {
-        private const string PROMPT_SAVE_BEFORE_CONTINUE = @"Warning: Your current recording progress will be deleted. Would you like to save the recording before continuing?";
-        private static readonly string SAVE_FILE_INITIAL_DIRECTORY = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        private static readonly Combination START_KEY_COMBINATION = Combination.TriggeredBy(Keys.A).With(Keys.S);
-        private static readonly Combination STOP_KEY_COMBINATION = Combination.TriggeredBy(Keys.A).With(Keys.S);
+        private const string PROMPT_SAVE_BEFORE_CONTINUE = "Warning: Your current recording progress will be deleted. Would you like to save the recording before continuing?";
+        private const string PROMPT_CONFIGURE_START_RECORDING_HOTKEYS = "Press key combinations to configure the start recording hotkeys:";
+        private const string PROMPT_CONFIGURE_STOP_RECORDING_HOTKEYS = "Press key combinations to configure the stop recording hotkeys:";
+        private const string BTNRECORD_TOOLTIP_BASE = "Start recording";
+        private const string BTNSTOP_TOOLTIP_BASE = "Stop Recording";
+
+        private static readonly string SAVE_FILE_INITIAL_DIRECTORY = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
+        private static Combination _startRecordingCombination = Combination.TriggeredBy(Keys.A).With(Keys.S);
+        private static Combination _stopRecordingCombination = Combination.TriggeredBy(Keys.A).With(Keys.S);
 
         private readonly RecordViewModel _model;
         private readonly IGlobalRecordingService _service;
@@ -40,8 +46,8 @@ namespace MouseRecorder.CSharp.App.Views
 
             // Subscribe to the recording service
             _service = new GlobalRecordingService();
-            _service.RegisterCombinations(START_KEY_COMBINATION, STOP_KEY_COMBINATION);
 
+            RegisterHotKeys();
             SubscribeToStartStopRecordingEvents();
         }
 
@@ -87,7 +93,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnKeyDown(KeyEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Down: {e.KeyCode}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Down: {e.KeyCode.Consolidate().GetKeyDescription()}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -96,7 +102,7 @@ namespace MouseRecorder.CSharp.App.Views
         /// </summary>
         private void OnKeyUp(KeyEventArgs e)
         {
-            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Up: {e.KeyCode}");
+            _model.Actions.Add($"{SystemTime.Now().Ticks} - Key Up: {e.KeyCode.Consolidate().GetKeyDescription()}");
             ListViewActions.ScrollIntoView(_model.Actions.LastOrDefault());
         }
 
@@ -139,6 +145,15 @@ namespace MouseRecorder.CSharp.App.Views
         #endregion
         #region Control Event Handlers
 
+        private void UserControl_KeyDown(object sender, SWInput.KeyEventArgs e)
+        {
+            // Ignore system keys so they can be captured by the recording service
+            if (e.Key == SWInput.Key.System)
+            {
+                e.Handled = true;
+            }
+        }
+
         private void BtnView_Clicked(object sender, RoutedEventArgs e)
         {
             /// Two options here:
@@ -178,10 +193,32 @@ namespace MouseRecorder.CSharp.App.Views
             OnStartRecording();
         }
 
+        private void BtnRecordConfigure_Click(object sender, RoutedEventArgs e)
+        {
+            _service.Unsubscribe();
+
+            // Prompt user to configure the hotkeys.
+            _startRecordingCombination = ConfigureHotkeysView.Prompt("Configure Start Recording Hotkeys", PROMPT_CONFIGURE_START_RECORDING_HOTKEYS, _startRecordingCombination);
+
+            // Re-register the start/stop key combinations so they can be listened for.
+            RegisterHotKeys();
+        }
+
         private void BtnStop_Clicked(object sender, RoutedEventArgs e)
         {
             _service.StopRecording();
             OnStopRecording();
+        }
+
+        private void BtnStopConfigure_Click(object sender, RoutedEventArgs e)
+        {
+            _service.Unsubscribe();
+
+            // Prompt user to configure the hotkeys.
+            _stopRecordingCombination = ConfigureHotkeysView.Prompt("Configure Stop Recording Hotkeys", PROMPT_CONFIGURE_STOP_RECORDING_HOTKEYS, _stopRecordingCombination);
+
+            // Re-register the start/stop key combinations so they can be listened for.
+            RegisterHotKeys();
         }
 
         private void BtnZone_Click(object sender, RoutedEventArgs e)
@@ -242,6 +279,14 @@ namespace MouseRecorder.CSharp.App.Views
         #endregion
         #region Additional Helper Methods
 
+        private void RegisterHotKeys()
+        {
+            _service.RegisterCombinations(_startRecordingCombination, _stopRecordingCombination);
+
+            _model.BtnRecordToolTip = BTNRECORD_TOOLTIP_BASE + $" ({_startRecordingCombination})";
+            _model.BtnStopToolTip = BTNSTOP_TOOLTIP_BASE + $" ({_stopRecordingCombination})";
+        }
+
         /// <summary>
         /// Event handler for when the recording is started.
         /// </summary>
@@ -301,7 +346,7 @@ namespace MouseRecorder.CSharp.App.Views
             }
 
             // Re-register the start/stop key combinations so they can be listened for.
-            _service.RegisterCombinations(START_KEY_COMBINATION, STOP_KEY_COMBINATION);
+            RegisterHotKeys();
         }
 
         /// <summary>

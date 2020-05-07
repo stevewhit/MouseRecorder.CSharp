@@ -42,6 +42,27 @@ namespace MouseRecorder.CSharp.App.ViewModel
             set => _showStartingPositionOverlay = value;// Set(ref _showStartingPositionOverlay, value);
         }
 
+        private string _startRecordingCombination;
+        public string StartRecordingCombination
+        {
+            get => _startRecordingCombination;
+            set => Set(ref _startRecordingCombination, value);
+        }
+
+        private string _btnRecordToolTip;
+        public string BtnRecordToolTip
+        {
+            get => _btnRecordToolTip;
+            set => Set(ref _btnRecordToolTip, value);
+        }
+
+        private string _btnStopToolTip;
+        public string BtnStopToolTip
+        {
+            get => _btnStopToolTip;
+            set => Set(ref _btnStopToolTip, value);
+        }
+
         public RecordViewModel()
         {
             _showRecordedActions = true;

@@ -70,11 +70,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\ConfigureHotkeysViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\PageViewModelBase.cs" />
     <Compile Include="ViewModel\PlaybackViewModel.cs" />
     <Compile Include="ViewModel\ClickZoneViewModel.cs" />
     <Compile Include="ViewModel\RecordViewModel.cs" />
+    <Compile Include="Views\ConfigureHotkeysView.xaml.cs">
+      <DependentUpon>ConfigureHotkeysView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ClickZoneView.xaml.cs">
       <DependentUpon>ClickZoneView.xaml</DependentUpon>
     </Compile>
@@ -99,6 +103,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ConfigureHotkeysView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ClickZoneView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -489,8 +489,11 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         private void OnKeyDownStorePressedKey(object sender, KeyEventArgs e)
         {
-            if (!_pressedKeys.Contains(e.KeyCode))
-                _pressedKeys.Add(e.KeyCode);
+            // Consolidate the all variations of this key (LShift == RShift)
+            var pressedKey = e.KeyCode.Consolidate();
+
+            if (!_pressedKeys.Contains(pressedKey))
+                _pressedKeys.Add(pressedKey);
         }
 
         /// <summary>
@@ -498,8 +501,11 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         private void OnKeyUpRemovePressedKey(object sender, KeyEventArgs e)
         {
-            if (_pressedKeys.Contains(e.KeyCode))
-                _pressedKeys.Remove(e.KeyCode);
+            // Consolidate the all variations of this key (LShift == RShift)
+            var pressedKey = e.KeyCode.Consolidate();
+
+            if (_pressedKeys.Contains(pressedKey))
+                _pressedKeys.Remove(pressedKey);
         }
 
         /// <summary>
@@ -510,7 +516,7 @@ namespace MouseRecorder.CSharp.Business.Services
             _currentRecording.Actions.Add(new RecordedKeyboardButtonPress()
             {
                 TimeRecorded = SystemTime.Now().Ticks,
-                Key = e.KeyCode
+                Key = e.KeyCode.Consolidate()
             });
 
             AdditionalActionOnKeyDown?.Invoke(e);
@@ -524,7 +530,7 @@ namespace MouseRecorder.CSharp.Business.Services
             _currentRecording.Actions.Add(new RecordedKeyboardButtonRelease()
             {
                 TimeRecorded = SystemTime.Now().Ticks,
-                Key = e.KeyCode
+                Key = e.KeyCode.Consolidate()
             });
 
             AdditionalActionOnKeyUp?.Invoke(e);
