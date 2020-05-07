@@ -64,6 +64,11 @@ namespace MouseRecorder.CSharp.Business.Services
         Action AdditionalActionOnStopRecording { get; set; }
 
         /// <summary>
+        /// Returns the number of ticks that have elapsed for the current recording.
+        /// </summary>
+        long CurrentRecordingTicks { get; }
+
+        /// <summary>
         /// Registers the <paramref name="startRecordingCombination"/> and <paramref name="stopRecordingCombination"/> combinations
         /// for starting and stopping the recording.
         /// </summary>
@@ -91,7 +96,7 @@ namespace MouseRecorder.CSharp.Business.Services
         /// Removes any existing recorded actions and any click-zones if the <paramref name="removeClickZones"/> flag is set.
         /// </summary>
         /// <param name="removeClickZones">Flag to indicate if the click-zones should be removed.</param>
-        void ResetRecordedActions(bool removeClickZones = true);
+        void ResetRecording(bool removeClickZones = true);
 
         /// <summary>
         /// Saves the recording to the desired <paramref name="filePath"/>.
@@ -119,7 +124,8 @@ namespace MouseRecorder.CSharp.Business.Services
         private Combination _startRecordingCombination;
         private Combination _stopRecordingCombination;
         private ISet<Keys> _pressedKeys;
-        private bool _isRecording;
+        private bool _isRecordingActions;        
+        private readonly Stopwatch _recordingStopwatch;
 
         private static IKeyboardMouseEvents _globalKeyMouseEvents;
         private static IKeyboardMouseEvents GlobalEventsHook
@@ -133,7 +139,12 @@ namespace MouseRecorder.CSharp.Business.Services
             }
             set => _globalKeyMouseEvents = value;
         }
-        
+
+        /// <summary>
+        /// Returns the number of ticks that have elapsed for the current recording.
+        /// </summary>
+        public long CurrentRecordingTicks => _recordingStopwatch.Elapsed.Ticks;
+
         #region Additional Recording Event Action Properties
 
         /// <summary>
@@ -190,11 +201,9 @@ namespace MouseRecorder.CSharp.Business.Services
         public GlobalRecordingService(IFileService fileService)
         {
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
-            ResetRecordedActions();
+            _recordingStopwatch = new Stopwatch();
 
-            // Initialize the system stopwatch.
-            // Note: Using a stopwatch for higher-resolution timing rather than DateTime.Now
-            SystemTime.Stopwatch = new Stopwatch();
+            ResetRecording();
         }
 
         #region IGlobalRecordingService Methods
@@ -237,10 +246,10 @@ namespace MouseRecorder.CSharp.Business.Services
         public void StartRecording(bool appendToExisting=true)
         {
             // Don't allow the recording to start numerous times.
-            if (_isRecording)
+            if (_isRecordingActions)
                 return;
 
-            _isRecording = true;
+            _isRecordingActions = true;
 
             if (!appendToExisting)
                 _currentRecording.Actions = new List<IRecordedAction>();
@@ -257,10 +266,12 @@ namespace MouseRecorder.CSharp.Business.Services
             // Add object to list of recorded actions.
             _currentRecording.Actions.Add(new RecordedStart() 
             { 
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks
+                TimeRecorded = CurrentRecordingTicks
             });
 
-            SystemTime.Stopwatch.Start();
+            // Start the stopwatch if it isn't running.
+            if (!_recordingStopwatch.IsRunning)
+                _recordingStopwatch.Start();
 
             // Invoke the added action
             AdditionalActionOnStartRecording?.Invoke();
@@ -272,16 +283,15 @@ namespace MouseRecorder.CSharp.Business.Services
         public void StopRecording()
         {
             // Don't allow the recording to stop numerous times.
-            if (!_isRecording)
+            if (!_isRecordingActions)
                 return;
 
-            SystemTime.Stopwatch.Stop();
-            _isRecording = false;
+            _isRecordingActions = false;
 
             // Add object to list of recorded actions.
             _currentRecording.Actions.Add(new RecordedStop()
             {
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks
+                TimeRecorded = CurrentRecordingTicks
             });
 
             // Unsubscribe from any previous key & mouse event handlers.
@@ -301,11 +311,12 @@ namespace MouseRecorder.CSharp.Business.Services
 
         /// <summary>
         /// Removes any existing recorded actions and any click-zones if the <paramref name="removeClickZones"/> flag is set.
+        /// Also resets the recording timer.
         /// </summary>
         /// <param name="removeClickZones">Flag to indicate if the click-zones should be removed.</param>
-        public void ResetRecordedActions(bool removeClickZones=true)
+        public void ResetRecording(bool removeClickZones=true)
         {
-            if (_isRecording)
+            if (_isRecordingActions)
                 StopRecording();
 
             if (_currentRecording == null)
@@ -315,6 +326,8 @@ namespace MouseRecorder.CSharp.Business.Services
             _currentRecording.Zones = removeClickZones || _currentRecording.Zones == null ? new List<IClickZone>() : _currentRecording.Zones;
 
             _pressedKeys = new HashSet<Keys>();
+
+            _recordingStopwatch.Reset();
         }
 
         /// <summary>
@@ -376,8 +389,8 @@ namespace MouseRecorder.CSharp.Business.Services
         /// </summary>
         private void SubscribeToStartStopCombinations()
         {
-            SetSubscriptionToStartRecordingCombinationEvents(!_isRecording);
-            SetSubscriptionToStopRecordingCombinationEvents(_isRecording);
+            SetSubscriptionToStartRecordingCombinationEvents(!_isRecordingActions);
+            SetSubscriptionToStopRecordingCombinationEvents(_isRecordingActions);
         }
 
         /// <summary>
@@ -523,7 +536,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedKeyboardButtonPress()
             {
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
+                TimeRecorded = CurrentRecordingTicks,
                 Key = e.KeyCode.Consolidate()
             });
 
@@ -537,7 +550,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedKeyboardButtonRelease()
             {
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
+                TimeRecorded = CurrentRecordingTicks,
                 Key = e.KeyCode.Consolidate()
             });
 
@@ -551,7 +564,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseMove()
             {
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
+                TimeRecorded = CurrentRecordingTicks,
                 XCoordinate = e.X,
                 YCoordinate = e.Y
             });
@@ -566,7 +579,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseButtonPress()
             {
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
+                TimeRecorded = CurrentRecordingTicks,
                 Button = e.Button,
                 PixelARGBValue = Monitor.GetPixelARGB(e.X, e.Y)
             });
@@ -581,7 +594,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseButtonRelease()
             {
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
+                TimeRecorded = CurrentRecordingTicks,
                 Button = e.Button
             });
 
@@ -595,7 +608,7 @@ namespace MouseRecorder.CSharp.Business.Services
         {
             _currentRecording.Actions.Add(new RecordedMouseWheelScroll()
             {
-                TimeRecorded = SystemTime.Stopwatch.Elapsed.Ticks,
+                TimeRecorded = CurrentRecordingTicks,
                 Delta = e.Delta
             });
 
