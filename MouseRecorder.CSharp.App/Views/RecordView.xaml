@@ -83,7 +83,6 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
-                    <CheckBox Grid.Column="0" Grid.Row="0" Margin="0, 3" IsChecked="{Binding ShowStartingPositionOverlay, Mode=TwoWay}" Checked="CheckBoxShowStartingPositionOverlay_Changed" Unchecked="CheckBoxShowStartingPositionOverlay_Changed">Show starting position overlay</CheckBox>
                     <CheckBox Grid.Column="0" Grid.Row="1" Margin="0, 3" IsChecked="{Binding ShowRecordedActions, Mode=TwoWay}" Checked="CheckBoxShowRecordedActions_Changed" Unchecked="CheckBoxShowRecordedActions_Changed">Show recording outputs</CheckBox>
                 </Grid>
             </GroupBox>

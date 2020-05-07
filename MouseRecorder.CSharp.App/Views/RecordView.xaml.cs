@@ -232,14 +232,6 @@ namespace MouseRecorder.CSharp.App.Views
                 UnsubscribeToKeyMouseEvents();
         }
 
-        private void CheckBoxShowStartingPositionOverlay_Changed(object sender, RoutedEventArgs e)
-        {
-            if (_model.ShowStartingPositionOverlay)
-                throw new NotImplementedException();
-            else
-                throw new NotImplementedException();
-        }
-
         private void MenuFileSave_Click(object sender, RoutedEventArgs e)
         {
             PromptAndSaveRecording();
