@@ -354,6 +354,9 @@ namespace MouseRecorder.CSharp.Business.Services
         /// <param name="clickZoneRectangle">The click-zone rectangle to add to the recording.</param>
         public void AddClickZone(Rectangle clickZoneRectangle)
         {
+            if (clickZoneRectangle == null)
+                throw new ArgumentNullException(nameof(clickZoneRectangle));
+
             _currentRecording.Zones.Add(new ClickZone() { Shape = clickZoneRectangle });
         }
 
