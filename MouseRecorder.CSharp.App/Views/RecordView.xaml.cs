@@ -8,7 +8,6 @@ using System.Linq;
 using System;
 using Framework.Generic.Utility;
 using System.Collections.Generic;
-using SWInput = System.Windows.Input;
 
 namespace MouseRecorder.CSharp.App.Views
 {
@@ -22,6 +21,8 @@ namespace MouseRecorder.CSharp.App.Views
         private const string PROMPT_CONFIGURE_STOP_RECORDING_HOTKEYS = "Press key combinations to configure the stop recording hotkeys:";
         private const string BTNRECORD_TOOLTIP_BASE = "Start recording";
         private const string BTNSTOP_TOOLTIP_BASE = "Stop Recording";
+        private const string MENU_CONFIGURE_START_RECORDING_HOTKEY_BASE = "Configure Start Hotkeys";
+        private const string MENU_CONFIGURE_STOP_RECORDING_HOTKEY_BASE = "Configure Stop Hotkeys";
 
         private static readonly string SAVE_FILE_INITIAL_DIRECTORY = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
         private static Combination _startRecordingCombination = Combination.TriggeredBy(Keys.A).With(Keys.S);
@@ -144,15 +145,6 @@ namespace MouseRecorder.CSharp.App.Views
 
         #endregion
         #region Control Event Handlers
-
-        private void UserControl_KeyDown(object sender, SWInput.KeyEventArgs e)
-        {
-            // Ignore system keys so they can be captured by the recording service
-            if (e.Key == SWInput.Key.System)
-            {
-                e.Handled = true;
-            }
-        }
 
         private void BtnView_Clicked(object sender, RoutedEventArgs e)
         {
@@ -279,12 +271,18 @@ namespace MouseRecorder.CSharp.App.Views
         #endregion
         #region Additional Helper Methods
 
+        /// <summary>
+        /// Re-registers the start/stop recording hotkeys with the service and updates all tooltips and menu items.
+        /// </summary>
         private void RegisterHotKeys()
         {
             _service.RegisterCombinations(_startRecordingCombination, _stopRecordingCombination);
 
-            _model.BtnRecordToolTip = BTNRECORD_TOOLTIP_BASE + $" ({_startRecordingCombination})";
-            _model.BtnStopToolTip = BTNSTOP_TOOLTIP_BASE + $" ({_stopRecordingCombination})";
+            _model.BtnRecordToolTip = $"{BTNRECORD_TOOLTIP_BASE} ({_startRecordingCombination})";
+            _model.BtnStopToolTip = $"{BTNSTOP_TOOLTIP_BASE} ({_stopRecordingCombination})";
+
+            _model.MenuConfigureStartRecording = $"{MENU_CONFIGURE_START_RECORDING_HOTKEY_BASE} ({_startRecordingCombination})";
+            _model.MenuConfigureStopRecording = $"{MENU_CONFIGURE_STOP_RECORDING_HOTKEY_BASE} ({_stopRecordingCombination})";
         }
 
         /// <summary>

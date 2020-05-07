@@ -63,6 +63,20 @@ namespace MouseRecorder.CSharp.App.ViewModel
             set => Set(ref _btnStopToolTip, value);
         }
 
+        private string _menuConfigureStartRecording;
+        public string MenuConfigureStartRecording
+        {
+            get => _menuConfigureStartRecording;
+            set => Set(ref _menuConfigureStartRecording, value);
+        }
+
+        private string _menuConfigureStopRecording;
+        public string MenuConfigureStopRecording
+        {
+            get => _menuConfigureStopRecording;
+            set => Set(ref _menuConfigureStopRecording, value);
+        }
+
         public RecordViewModel()
         {
             _showRecordedActions = true;
